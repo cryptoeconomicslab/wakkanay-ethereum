@@ -1,12 +1,12 @@
-import { Address } from '../types/types'
-import { DeciderInterface } from './deciderInterface'
+import { Address } from '../types'
+import { IDecider } from './IDecider'
 
 export class DeciderManager {
-  private deciders: Map<Address, DeciderInterface>
+  private deciders: Map<Address, IDecider>
   constructor() {
-    this.deciders = new Map<Address, DeciderInterface>()
+    this.deciders = new Map<Address, IDecider>()
   }
-  public set_decider(address: Address, decier: DeciderInterface) {
+  public set_decider(address: Address, decier: IDecider) {
     this.deciders.set(address, decier)
   }
   public get_decider(address: Address) {

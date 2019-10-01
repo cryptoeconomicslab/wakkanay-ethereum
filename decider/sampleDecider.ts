@@ -1,8 +1,8 @@
-import { Bytes, Decision } from '../types/types'
-import { DeciderInterface } from './deciderInterface'
+import { Bytes, IDecision } from '../types'
+import { IDecider } from './IDecider'
 
-export class SampleDecider implements DeciderInterface {
-  public async decide(inputs: Bytes[]): Promise<Decision> {
+export class SampleDecider implements IDecider {
+  public async decide(inputs: Bytes[]): Promise<IDecision> {
     return {
       outcome: true
     }
