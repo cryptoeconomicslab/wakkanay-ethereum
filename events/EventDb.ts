@@ -9,8 +9,8 @@ export class EventDb {
   }
 
   public async getLastLoggedBlock(topic: Bytes): Promise<number> {
-    let result = await this.kvs.get(topic)
-    return result.map(s => parseInt(s)).orDefault(0)
+    const result = await this.kvs.get(topic)
+    return result === null ? 0 : parseInt(result)
   }
 
   public async setLastLoggedBlock(topic: Bytes, loaded: number): Promise<void> {
@@ -23,6 +23,6 @@ export class EventDb {
 
   public async getSeen(event: Bytes): Promise<boolean> {
     const result = await this.kvs.get(event)
-    return result.isSome()
+    return result !== null
   }
 }
