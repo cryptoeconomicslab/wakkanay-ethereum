@@ -1,1 +1,2 @@
-export * from './CommitmentContract'
+export * from './eth/CommitmentContract'
+export * from './interfaces/ICommitmentContract'
