@@ -1,17 +1,19 @@
 import * as ethers from 'ethers'
-import { EventDb } from './EventDb'
-import { KeyValueStore } from '../db'
+import { EventDb } from '../EventDb'
+import { KeyValueStore } from '../../db'
+import {
+  IEventWatcher,
+  EventHandler,
+  ErrorHandler,
+  CompletedHandler
+} from '../interfaces/IEventWatcher'
 type JsonRpcProvider = ethers.providers.JsonRpcProvider
-
-export type EventHandler = (e: any) => void
-export type CompletedHandler = () => void
-export type ErrorHandler = (err: Error) => void
 
 export interface EventWatcherOptions {
   interval: number
 }
 
-export class EventWatcher {
+export class EventWatcher implements IEventWatcher {
   public httpProvider: JsonRpcProvider
   public eventDb: EventDb
   public checkingEvents: Map<string, EventHandler>
