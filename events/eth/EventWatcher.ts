@@ -40,8 +40,12 @@ export class EventWatcher implements IEventWatcher {
     this.contractInterface = contractInterface
   }
 
-  public addEvent(event: string, handler: EventHandler) {
+  public addHandler(event: string, handler: EventHandler) {
     this.checkingEvents.set(event, handler)
+  }
+
+  public removeHandler(event: string) {
+    this.checkingEvents.delete(event)
   }
 
   public async initPolling(
