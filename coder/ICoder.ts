@@ -6,6 +6,11 @@ import IEncodable, {
   Tuple
 } from '../types/Encodables'
 
+/**
+ * Coder interface
+ * L1 specific ABI encoder/decoder must implement this interface.
+ * for example, Coder for ethereum can be implemented using web3.js or ethers.js
+ */
 export interface ICoder {
   encodeInteger(i: Integer): string
   encodeBytes(b: Bytes): string
@@ -16,11 +21,12 @@ export interface ICoder {
   decode(input: Bytes): IEncodable
 }
 
-// interface for encoder/decoder
-// regardless of encoding format, it can encode and decode
-// any types in types/Codables.
-// encode(Codable)
-// decode(Bytes)
+/* interface for encoder/decoder
+ * regardless of encoding format, it can encode and decode
+ * any types in types/Codables.
+ * encode(Codable)
+ * decode(Bytes)
+ */
 export default class Coder {
   private coder: ICoder
 
