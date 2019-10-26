@@ -1,9 +1,16 @@
-import IEncodable, { Bytes, Integer, List, Tuple } from '../types/Encodables'
+import IEncodable, {
+  Address,
+  Bytes,
+  Integer,
+  List,
+  Tuple
+} from '../types/Encodables'
 
 export interface ICoder {
   encodeInteger(i: Integer): string
   encodeBytes(b: Bytes): string
-  encodeList(l: List): string
+  encodeAddress(b: Address): string
+  encodeList<E extends IEncodable>(l: List<E>): string
   encodeTuple(t: Tuple): string
 
   decode(input: Bytes): IEncodable
