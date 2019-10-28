@@ -1,4 +1,4 @@
-import IEncodable from '../types/Encodables'
+import { IEncodable } from '../types/Encodables'
 
 /**
  * Coder interface

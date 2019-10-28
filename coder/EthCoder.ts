@@ -1,6 +1,7 @@
 import { AbiCoder } from 'web3-eth-abi'
 import { ICoder } from './ICoder'
-import IEncodable, {
+import {
+  IEncodable,
   Address,
   Bytes,
   Integer,
