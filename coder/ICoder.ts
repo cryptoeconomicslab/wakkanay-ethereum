@@ -1,10 +1,4 @@
-import IEncodable, {
-  Address,
-  Bytes,
-  Integer,
-  List,
-  Tuple
-} from '../types/Encodables'
+import IEncodable from '../types/Encodables'
 
 /**
  * Coder interface
@@ -12,13 +6,8 @@ import IEncodable, {
  * for example, Coder for ethereum can be implemented using web3.js or ethers.js
  */
 export interface ICoder {
-  encodeInteger(i: Integer): string
-  encodeBytes(b: Bytes): string
-  encodeAddress(b: Address): string
-  encodeList<E extends IEncodable>(l: List<E>): string
-  encodeTuple(t: Tuple): string
-
-  decode(input: Bytes): IEncodable
+  encodeParameter(input: IEncodable): string
+  decode(types: Array<string | object>, data: string): IEncodable
 }
 
 /* interface for encoder/decoder
@@ -38,7 +27,7 @@ export default class Coder {
     return input.encode(this.coder)
   }
 
-  decode(input: Bytes): IEncodable {
-    return this.coder.decode(input)
+  decode(types: Array<string | object>, data: string): IEncodable {
+    return this.coder.decode(types, data)
   }
 }
