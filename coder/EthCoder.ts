@@ -5,7 +5,8 @@ import IEncodable, {
   Bytes,
   Integer,
   List,
-  Tuple
+  Tuple,
+  Struct
 } from '../types/Encodables'
 
 // Get Ethereum type representation of IEncodables.
@@ -20,6 +21,8 @@ function getEthTypeStringRep(v: IEncodable): string {
     return `(${v.v.map(i => getEthTypeStringRep(i)).join(',')})`
   } else if (v instanceof Address) {
     return 'address'
+  } else if (v instanceof Struct) {
+    return 'struct' // TODO: use object representation
   }
   throw new Error(`Invalid type for Ethereum Abi coder: ${v.toString()}`)
 }
@@ -40,6 +43,7 @@ export default class EthCoder implements ICoder {
   }
 
   encodeParameters(input: Array<IEncodable>): string {
+    // TODO: implement
     return ''
   }
 
