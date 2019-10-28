@@ -1,17 +1,17 @@
 import { AbiCoder } from 'web3-eth-abi'
 import { ICoder } from './ICoder'
 import {
-  IEncodable,
+  Codable,
   Address,
   Bytes,
   Integer,
   List,
   Tuple,
   Struct
-} from '../types/Encodables'
+} from '../types/Codables'
 
-// Get Ethereum type representation of IEncodables.
-function getEthTypeStringRep(v: IEncodable): string {
+// Get Ethereum type representation of Codables.
+function getEthTypeStringRep(v: Codable): string {
   if (v instanceof Integer) {
     return 'u256'
   } else if (v instanceof Bytes) {
@@ -36,20 +36,20 @@ export default class EthCoder implements ICoder {
     this.abiCoder = new AbiCoder()
   }
 
-  encodeParameter(input: IEncodable): string {
+  encodeParameter(input: Codable): string {
     return this.abiCoder.encodeParameter(
       getEthTypeStringRep(input),
       input.raw()
     )
   }
 
-  encodeParameters(input: Array<IEncodable>): string {
+  encodeParameters(input: Array<Codable>): string {
     // TODO: implement
     return ''
   }
 
-  decode(types: Array<string | object>, data: string): IEncodable {
+  decode(types: Array<string | object>, data: string): Codable {
     // TODO: fix
-    return this.abiCoder.decodeParameters(types, data) as IEncodable
+    return this.abiCoder.decodeParameters(types, data) as Codable
   }
 }

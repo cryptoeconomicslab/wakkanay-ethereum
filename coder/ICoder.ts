@@ -1,4 +1,4 @@
-import { IEncodable } from '../types/Encodables'
+import { Codable } from '../types/Codables'
 
 /**
  * Coder interface
@@ -6,8 +6,8 @@ import { IEncodable } from '../types/Encodables'
  * for example, Coder for ethereum can be implemented using web3.js or ethers.js
  */
 export interface ICoder {
-  encodeParameter(input: IEncodable): string
-  decode(types: Array<string | object>, data: string): IEncodable
+  encodeParameter(input: Codable): string
+  decode(types: Array<string | object>, data: string): Codable
 }
 
 /* interface for encoder/decoder
@@ -23,11 +23,11 @@ export default class Coder {
     this.coder = coder
   }
 
-  encode(input: IEncodable): string {
+  encode(input: Codable): string {
     return input.encode(this.coder)
   }
 
-  decode(types: Array<string | object>, data: string): IEncodable {
+  decode(types: Array<string | object>, data: string): Codable {
     return this.coder.decode(types, data)
   }
 }
