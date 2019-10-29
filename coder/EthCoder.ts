@@ -1,5 +1,5 @@
 import { AbiCoder } from 'web3-eth-abi'
-import { ICoder } from './ICoder'
+import { ICoder } from './Coder'
 import {
   Codable,
   Address,
@@ -11,7 +11,7 @@ import {
 } from '../types/Codables'
 
 // Get Ethereum type representation of Codables.
-function getEthTypeStringRep(v: Codable): string {
+export function getEthTypeStringRep(v: Codable): string {
   if (v instanceof Integer) {
     return 'u256'
   } else if (v instanceof Bytes) {
