@@ -17,9 +17,9 @@ function getEthTypeStringRep(v: Codable): string {
   } else if (v instanceof Bytes) {
     return 'bytes'
   } else if (v instanceof List) {
-    return `${getEthTypeStringRep(v.v[0])}[]`
+    return `${getEthTypeStringRep(v.data[0])}[]`
   } else if (v instanceof Tuple) {
-    return `(${v.v.map(i => getEthTypeStringRep(i)).join(',')})`
+    return `(${v.data.map(i => getEthTypeStringRep(i)).join(',')})`
   } else if (v instanceof Address) {
     return 'address'
   } else if (v instanceof Struct) {
