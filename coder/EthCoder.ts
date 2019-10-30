@@ -73,7 +73,7 @@ export function getEthParamType(v: Codable): ParamType {
 const abiCoder = new AbiCoder()
 const EthCoder: Coder = {
   encode(input: Codable): string {
-    return abiCoder.encode([getEthParamType(input)], [input.raw()])
+    return abiCoder.encode([getEthParamType(input)], [input.raw])
   },
   // todo: have to type coercion based on given types array
   decode(types: Array<string | ParamType>, data: string): Codable {
