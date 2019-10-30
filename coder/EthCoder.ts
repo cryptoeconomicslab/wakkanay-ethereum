@@ -28,25 +28,41 @@ export function getEthTypeStringRep(v: Codable): string {
   throw new Error(`Invalid type for Ethereum Abi coder: ${v.toString()}`)
 }
 
+function asParamComponent(v: Codable, i: number, key?: string): ParamType {
+  const type = {
+    type: getEthTypeStringRep(v),
+    name: key || i.toString()
+  }
+  if (v instanceof Tuple) {
+    return {
+      ...type,
+      components: v.data.map((v, i) => asParamComponent(v, i))
+    }
+  } else if (v instanceof Struct) {
+    return {
+      ...type,
+      components: Object.keys(v.data)
+        .sort()
+        .map((k, i) => asParamComponent(v.data[k], i, k))
+    }
+  }
+
+  return type
+}
+
 // Get Ethreum ParamType representation of Codables
 export function getEthParamType(v: Codable): ParamType {
   if (v instanceof Tuple) {
     return {
       type: 'tuple',
-      components: v.data.map((v, i) => ({
-        name: i.toString(),
-        type: getEthTypeStringRep(v)
-      }))
+      components: v.data.map((v, i) => asParamComponent(v, i))
     }
   } else if (v instanceof Struct) {
     return {
       type: 'tuple',
       components: Object.keys(v.data)
         .sort()
-        .map((k, i) => ({
-          name: i.toString(),
-          type: getEthTypeStringRep(v)
-        }))
+        .map((k, i) => asParamComponent(v.data[k], i, k))
     }
   }
 
