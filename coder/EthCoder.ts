@@ -35,7 +35,7 @@ export function getEthParamType(v: Codable): ParamType {
       type: 'tuple',
       components: v.data.map((v, i) => ({
         name: i.toString(),
-        type: getEthParamType(v)
+        type: getEthTypeStringRep(v)
       }))
     }
   } else if (v instanceof Struct) {
@@ -45,7 +45,7 @@ export function getEthParamType(v: Codable): ParamType {
         .sort()
         .map((k, i) => ({
           name: i.toString(),
-          type: getEthParamType(v)
+          type: getEthTypeStringRep(v)
         }))
     }
   }
