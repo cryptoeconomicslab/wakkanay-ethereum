@@ -1,3 +1,10 @@
+import { Address } from '../../types'
+
 export interface IWallet {
-  signMessage(message: string): Promise<string>
+  getAddress(): Address
+  /**
+   * signMessage signed a hex string message
+   * @param message is hex string
+   */
+  signMessage(message: string): string
 }
