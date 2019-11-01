@@ -65,6 +65,14 @@ export function getEthParamType(v: Codable): ParamType {
         .sort()
         .map((k, i) => asParamComponent(v.data[k], i, k))
     }
+  } else if (
+    v instanceof List &&
+    (v.data[0] instanceof Tuple || v.data[0] instanceof Struct)
+  ) {
+    return {
+      type: 'tuple[]',
+      components: getEthParamType(v.data[0]).components
+    }
   }
 
   return { type: getEthTypeStringRep(v) }
@@ -78,20 +86,29 @@ export function decodeInner(d: Codable, input: any): Codable {
   } else if (d instanceof Bytes) {
     d.setData(arrayify(input))
   } else if (d instanceof List) {
-    const l = d.data[0]
     d.setData(
-      d.data.map((d, i) => {
-        d.C.default()
+      input.map((i: any) => {
+        const di = d.getC().default()
+        decodeInner(di, i)
+        return di
       })
     )
   } else if (d instanceof Tuple) {
     d.setData(d.data.map((d, i) => decodeInner(d, input[i])))
   } else if (d instanceof Struct) {
+    const data: { [key: string]: Codable } = {}
+    Object.keys(d.data)
+      .sort()
+      .forEach((k, i) => {
+        data[k] = decodeInner(d.data[k], input[i])
+      })
+    d.setData(data)
   } else {
     throw AbiDecodeError.from(d)
   }
   return d
 }
+
 // Ethereum ABI coder
 const abiCoder = new AbiCoder()
 const EthCoder: Coder = {
