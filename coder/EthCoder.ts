@@ -1,4 +1,4 @@
-import { AbiCoder, ParamType } from 'ethers/utils'
+import { AbiCoder, ParamType, arrayify } from 'ethers/utils'
 import { Coder } from './Coder'
 import {
   Codable,
@@ -9,6 +9,7 @@ import {
   Tuple,
   Struct
 } from '../types/Codables'
+import { AbiDecodeError } from './Error'
 
 // Get Ethereum type representation of Codables.
 export function getEthTypeStringRep(v: Codable): string {
@@ -69,15 +70,38 @@ export function getEthParamType(v: Codable): ParamType {
   return { type: getEthTypeStringRep(v) }
 }
 
-// Ethereum ABI coder wrapper implement Coder interface.
+export function decodeInner(d: Codable, input: any): Codable {
+  if (d instanceof Integer) {
+    d.setData(input.toNumber())
+  } else if (d instanceof Address) {
+    d.setData(input)
+  } else if (d instanceof Bytes) {
+    d.setData(arrayify(input))
+  } else if (d instanceof List) {
+    const l = d.data[0]
+    d.setData(
+      d.data.map((d, i) => {
+        d.C.default()
+      })
+    )
+  } else if (d instanceof Tuple) {
+    d.setData(d.data.map((d, i) => decodeInner(d, input[i])))
+  } else if (d instanceof Struct) {
+  } else {
+    throw AbiDecodeError.from(d)
+  }
+  return d
+}
+// Ethereum ABI coder
 const abiCoder = new AbiCoder()
 const EthCoder: Coder = {
   encode(input: Codable): string {
     return abiCoder.encode([getEthParamType(input)], [input.raw])
   },
-  // todo: have to type coercion based on given types array
-  decode(types: Array<string | ParamType>, data: string): Codable {
-    return abiCoder.decode(types, data)
+  decode<T extends Codable>(d: T, data: string): T {
+    const t = getEthParamType(d)
+    const res = abiCoder.decode([t], data) as Array<any>
+    return decodeInner(d, res[0]) as T
   }
 }
 

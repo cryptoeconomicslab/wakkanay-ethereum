@@ -1,5 +1,8 @@
 import { Codable } from '../types/Codables'
-import { ParamType } from '../types/types'
+
+export interface Default<T> {
+  default(): T
+}
 
 /**
  * Coder type
@@ -8,5 +11,5 @@ import { ParamType } from '../types/types'
  */
 export type Coder = {
   encode(input: Codable): string
-  decode(types: Array<string | ParamType>, data: string): Codable
+  decode<T extends Codable>(d: T, data: string): T
 }
