@@ -1,9 +1,5 @@
 import { Codable } from '../types/Codables'
 
-export interface Default<T> {
-  default(): T
-}
-
 /**
  * Coder type
  * L1 specific ABI encoder/decoder must implement this interface.

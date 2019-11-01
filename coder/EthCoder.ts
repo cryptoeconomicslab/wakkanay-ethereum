@@ -29,6 +29,7 @@ export function getEthTypeStringRep(v: Codable): string {
   throw new Error(`Invalid type for Ethereum Abi coder: ${v.toString()}`)
 }
 
+// Ethereum type representation with components field.
 function asParamComponent(v: Codable, i: number, key?: string): ParamType {
   const type = {
     type: getEthTypeStringRep(v),
@@ -78,6 +79,8 @@ export function getEthParamType(v: Codable): ParamType {
   return { type: getEthTypeStringRep(v) }
 }
 
+// decode inner representation.
+// transform decoded object into certain Codable type
 export function decodeInner(d: Codable, input: any): Codable {
   if (d instanceof Integer) {
     d.setData(input.toNumber())
@@ -109,12 +112,21 @@ export function decodeInner(d: Codable, input: any): Codable {
   return d
 }
 
-// Ethereum ABI coder
 const abiCoder = new AbiCoder()
+// Ethereum coder object
 const EthCoder: Coder = {
+  /**
+   * encode given codable object into EthereumABI hex string representation
+   * @param input codable object to encode
+   */
   encode(input: Codable): string {
     return abiCoder.encode([getEthParamType(input)], [input.raw])
   },
+  /**
+   * decode given hex string into given codable object
+   * @param d Codable object to represent into what type data is decoded
+   * @param data hex string to decode
+   */
   decode<T extends Codable>(d: T, data: string): T {
     const t = getEthParamType(d)
     const res = abiCoder.decode([t], data) as Array<any>
