@@ -18,7 +18,8 @@ export function getEthTypeStringRep(v: Codable): string {
   } else if (v instanceof Bytes) {
     return 'bytes'
   } else if (v instanceof List) {
-    return `${getEthTypeStringRep(v.data[0])}[]`
+    const d = v.getC().default()
+    return `${getEthTypeStringRep(d)}[]`
   } else if (v instanceof Tuple) {
     return 'tuple'
   } else if (v instanceof Address) {
@@ -66,13 +67,13 @@ export function getEthParamType(v: Codable): ParamType {
         .sort()
         .map((k, i) => asParamComponent(v.data[k], i, k))
     }
-  } else if (
-    v instanceof List &&
-    (v.data[0] instanceof Tuple || v.data[0] instanceof Struct)
-  ) {
-    return {
-      type: 'tuple[]',
-      components: getEthParamType(v.data[0]).components
+  } else if (v instanceof List) {
+    const d = v.getC().default()
+    if (d instanceof Tuple || d instanceof Struct) {
+      return {
+        type: 'tuple[]',
+        components: getEthParamType(d).components
+      }
     }
   }
 
