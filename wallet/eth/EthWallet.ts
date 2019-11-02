@@ -1,7 +1,7 @@
 import { IWallet } from '../interfaces/IWallet'
 import * as ethers from 'ethers'
 import { arrayify, joinSignature, SigningKey } from 'ethers/utils'
-import { Address } from '../../types'
+import { Address } from '../../types/Codables'
 
 export class EthWallet implements IWallet {
   private ethersWallet: ethers.Wallet
@@ -14,7 +14,7 @@ export class EthWallet implements IWallet {
     return this.ethersWallet
   }
   public getAddress(): Address {
-    return this.signingKey.address
+    return Address.from(this.signingKey.address)
   }
   /**
    * signMessage signed a hex string message

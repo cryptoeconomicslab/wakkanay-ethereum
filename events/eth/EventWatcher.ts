@@ -7,6 +7,7 @@ import {
   ErrorHandler,
   CompletedHandler
 } from '../interfaces/IEventWatcher'
+import { Bytes } from '../../types/Codables'
 type JsonRpcProvider = ethers.providers.JsonRpcProvider
 
 export interface EventWatcherOptions {
@@ -54,7 +55,9 @@ export class EventWatcher implements IEventWatcher {
   ) {
     try {
       const block = await this.httpProvider.getBlock('latest')
-      const loaded = await this.eventDb.getLastLoggedBlock(this.contractAddress)
+      const loaded = await this.eventDb.getLastLoggedBlock(
+        Bytes.fromString(this.contractAddress)
+      )
       await this.polling(loaded, block.number, handler)
     } catch (e) {
       console.log(e)
@@ -87,7 +90,9 @@ export class EventWatcher implements IEventWatcher {
     const filtered = events
       .filter(async e => {
         if (e.transactionHash) {
-          const seen = await this.eventDb.getSeen(e.transactionHash)
+          const seen = await this.eventDb.getSeen(
+            Bytes.fromHexString(e.transactionHash)
+          )
           return !seen
         } else {
           return false
@@ -100,11 +105,14 @@ export class EventWatcher implements IEventWatcher {
           handler(logDesc)
         }
         if (e.transactionHash) {
-          this.eventDb.addSeen(e.transactionHash)
+          this.eventDb.addSeen(Bytes.fromHexString(e.transactionHash))
         }
         return true
       })
-    await this.eventDb.setLastLoggedBlock(this.contractAddress, blockNumber)
+    await this.eventDb.setLastLoggedBlock(
+      Bytes.fromString(this.contractAddress),
+      blockNumber
+    )
     if (filtered.length > 0) {
       completedHandler()
     }

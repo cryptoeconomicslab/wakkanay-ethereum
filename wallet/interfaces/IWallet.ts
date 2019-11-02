@@ -1,4 +1,4 @@
-import { Address } from '../../types'
+import { Address } from '../../types/Codables'
 
 export interface IWallet {
   getAddress(): Address
