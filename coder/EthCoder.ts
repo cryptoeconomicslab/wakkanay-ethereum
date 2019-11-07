@@ -120,17 +120,19 @@ const EthCoder: Coder = {
    * encode given codable object into EthereumABI hex string representation
    * @param input codable object to encode
    */
-  encode(input: Codable): string {
-    return abiCoder.encode([getEthParamType(input)], [input.raw])
+  encode(input: Codable): Bytes {
+    return Bytes.fromHexString(
+      abiCoder.encode([getEthParamType(input)], [input.raw])
+    )
   },
   /**
    * decode given hex string into given codable object
    * @param d Codable object to represent into what type data is decoded
    * @param data hex string to decode
    */
-  decode<T extends Codable>(d: T, data: string): T {
+  decode<T extends Codable>(d: T, data: Bytes): T {
     const t = getEthParamType(d)
-    const res = abiCoder.decode([t], data) as Array<any>
+    const res = abiCoder.decode([t], data.toHexString()) as Array<any>
     return decodeInner(d, res[0]) as T
   }
 }
