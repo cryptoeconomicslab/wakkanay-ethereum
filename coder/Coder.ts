@@ -1,4 +1,4 @@
-import { Codable } from '../types/Codables'
+import { Bytes, Codable } from '../types/Codables'
 
 /**
  * Coder type
@@ -6,6 +6,6 @@ import { Codable } from '../types/Codables'
  * for example, Coder for ethereum can be implemented using web3.js or ethers.js
  */
 export type Coder = {
-  encode(input: Codable): string
-  decode<T extends Codable>(d: T, data: string): T
+  encode(input: Codable): Bytes
+  decode<T extends Codable>(d: T, data: Bytes): T
 }
