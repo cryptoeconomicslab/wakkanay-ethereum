@@ -1,7 +1,7 @@
 import { IWallet } from '../interfaces/IWallet'
 import * as ethers from 'ethers'
 import { arrayify, joinSignature, SigningKey } from 'ethers/utils'
-import { Address } from '../../types/Codables'
+import { Address, Bytes } from '../../types/Codables'
 
 export class EthWallet implements IWallet {
   private ethersWallet: ethers.Wallet
@@ -17,10 +17,24 @@ export class EthWallet implements IWallet {
     return Address.from(this.signingKey.address)
   }
   /**
+   * recoverAddress
+   */
+  public recoverAddress(message: Bytes, signatureBytes: Bytes): Address {
+    const signature = ethers.utils.splitSignature(signatureBytes.toHexString())
+    const recoverAddress = ethers.utils.recoverAddress(
+      message.toHexString(),
+      signature
+    )
+    return Address.from(recoverAddress)
+  }
+
+  /**
    * signMessage signed a hex string message
    * @param message is hex string
    */
-  public signMessage(message: string): string {
-    return joinSignature(this.signingKey.signDigest(arrayify(message)))
+  public signMessage(message: Bytes): Bytes {
+    return Bytes.fromHexString(
+      joinSignature(this.signingKey.signDigest(arrayify(message.toHexString())))
+    )
   }
 }
