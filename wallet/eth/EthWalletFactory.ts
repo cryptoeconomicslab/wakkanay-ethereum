@@ -5,6 +5,9 @@ import * as ethers from 'ethers'
 
 export class EthWalletFactory implements IWalletFactory {
   async fromPrivateKey(privateKey: string): Promise<IWallet> {
-    return new EthWallet(new ethers.Wallet(privateKey))
+    // connecting to eth main net
+    return new EthWallet(
+      new ethers.Wallet(privateKey, ethers.getDefaultProvider())
+    )
   }
 }

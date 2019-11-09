@@ -2,6 +2,8 @@ import { IWallet } from '../interfaces/IWallet'
 import * as ethers from 'ethers'
 import { arrayify, joinSignature, SigningKey } from 'ethers/utils'
 import { Address, Bytes } from '../../types/Codables'
+import { IDepositContract } from '../../contract'
+import { DepositContract } from '../../contract/eth/DepositContract'
 
 export class EthWallet implements IWallet {
   private ethersWallet: ethers.Wallet
@@ -36,5 +38,8 @@ export class EthWallet implements IWallet {
     return Bytes.fromHexString(
       joinSignature(this.signingKey.signDigest(arrayify(message.toHexString())))
     )
+  }
+  public getDepositContract(address: Address): IDepositContract {
+    return new DepositContract(this, address.data)
   }
 }
