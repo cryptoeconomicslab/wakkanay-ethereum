@@ -15,7 +15,7 @@ export interface IWallet {
    */
   signMessage(message: Bytes): Bytes
   /**
-   * Gets deposit contract interface
+   * Gets deposit contract interface for certain L1 platform
    * @param address
    */
   getDepositContract(address: Address): IDepositContract

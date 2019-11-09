@@ -8,7 +8,7 @@ import { getConnection } from './helpers/getConnection'
 const abi = [
   'function deposit(uint256 _amount, tuple(address, bytes[]) _initialState)',
   'function finalizeCheckpoint(tuple(address, bytes[]) _checkpoint)',
-  'function finalizeExit(tuple(address, bytes[]) _stateUpdate, uint256 _depositedRangeId)'
+  'function finalizeExit(tuple(address, bytes[]) _exit, uint256 _depositedRangeId)'
 ]
 
 export class DepositContract implements IDepositContract {
@@ -32,11 +32,8 @@ export class DepositContract implements IDepositContract {
       gasLimit: this.gasLimit
     })
   }
-  async finalizeExit(
-    stateUpdate: Property,
-    depositedRangeId: number
-  ): Promise<void> {
-    return await this.connection.deposit(stateUpdate, depositedRangeId, {
+  async finalizeExit(exit: Property, depositedRangeId: number): Promise<void> {
+    return await this.connection.deposit(exit, depositedRangeId, {
       gasLimit: this.gasLimit
     })
   }
