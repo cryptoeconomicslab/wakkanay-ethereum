@@ -1,5 +1,4 @@
 import * as ethers from 'ethers'
-import { Bytes } from '../../types/Codables'
 import { EthWallet } from '../../wallet/eth/EthWallet'
 import { IDepositContract } from '../interfaces/IDepositContract'
 import { Property } from '../../ovm/types'
