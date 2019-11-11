@@ -12,9 +12,6 @@ export class EthWallet implements IWallet {
     this.ethersWallet = ethersWallet
     this.signingKey = new SigningKey(this.ethersWallet.privateKey)
   }
-  public getEthersWallet(): ethers.Wallet {
-    return this.ethersWallet
-  }
   public getAddress(): Address {
     return Address.from(this.signingKey.address)
   }
@@ -40,6 +37,21 @@ export class EthWallet implements IWallet {
     )
   }
   public getDepositContract(address: Address): IDepositContract {
-    return new DepositContract(this, address.data)
+    return new DepositContract(this.getConnection(address, DepositContract.abi))
+  }
+  /**
+   * Get contract instance which connecting by this wallet.
+   * @param wallet
+   * @param contractAddress
+   * @param abi
+   */
+  private getConnection(contractAddress: Address, abi: string[]) {
+    const ethersWallet = this.ethersWallet
+    const contract = new ethers.Contract(
+      contractAddress.data,
+      abi,
+      ethersWallet.provider
+    )
+    return contract.connect(ethersWallet)
   }
 }
