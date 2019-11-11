@@ -4,6 +4,8 @@ export * from './interfaces/IWallet'
 export * from './interfaces/IWalletFactory'
 export * from './eth/EthWallet'
 export * from './eth/EthWalletFactory'
+export * from './tezos/TezosWallet'
+export * from './tezos/TezosWalletFactory'
 
 // TODO: switch by env
 const Wallet = EthWallet

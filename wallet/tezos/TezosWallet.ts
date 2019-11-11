@@ -1,0 +1,48 @@
+import { IWallet } from '../interfaces/IWallet'
+import { Address, Bytes } from '../../types/Codables'
+import sodiumsumo from 'libsodium-wrappers-sumo'
+import {
+  CryptoUtils,
+  KeyStore,
+  TezosMessageUtils
+} from 'conseiljs'
+
+export class TezosWallet implements IWallet {
+  private tezosWallet: KeyStore
+  constructor(tezosWallet: KeyStore) {
+    this.tezosWallet = tezosWallet
+  }
+  public getTezosWallet(): KeyStore {
+    return this.tezosWallet
+  }
+  public getAddress(): Address {
+    return Address.from(this.tezosWallet.publicKeyHash)
+  }
+  /**
+   * signMessage signed a hex string message
+   * @param message is hex string
+   */
+  public async signMessage(message: Bytes): Promise<Bytes> {
+    const messageBuffer = Buffer.from(message.toHexString())
+    const privateKeyBuffer = TezosMessageUtils.writeKeyWithHint(this.tezosWallet.privateKey, 'edsk')
+    const signatureBuffer = await CryptoUtils.signDetached(messageBuffer, privateKeyBuffer)
+    return Bytes.fromHexString(
+      signatureBuffer.toString('hex')
+    )
+  }
+  /**
+   * verify signature
+   * Only support Ed25519 key (tz1)
+   */
+  public async verifySignature(message: Bytes, signature: Bytes, publicKey: Bytes): Promise<Boolean> {
+    const messageBuffer = Buffer.from(message.toHexString())
+    const publicKeyBuffer = TezosMessageUtils.writeKeyWithHint(publicKey.intoString(), 'edpk')
+    const signatureBuffer = Buffer.from(signature.toHexString().slice(2), 'hex')
+    await sodiumsumo.ready
+    return sodiumsumo.crypto_sign_verify_detached(
+      signatureBuffer,
+      messageBuffer,
+      publicKeyBuffer
+    )
+  }
+}

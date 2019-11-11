@@ -2,15 +2,19 @@ import { Address, Bytes } from '../../types/Codables'
 
 export interface IWallet {
   getAddress(): Address
-  /**
-   * Recovers address from message and signature
-   * @param message
-   * @param signature
-   */
-  recoverAddress(message: Bytes, signature: Bytes): Address
+
   /**
    * signMessage signed a hex string message
    * @param message is hex string
    */
-  signMessage(message: Bytes): Bytes
+  signMessage(message: Bytes): Promise<Bytes>
+
+  /**
+   * Verify message and signature from publicKey
+   * publicKey isn't needed depending on the cryptographic algorithm
+   * @param message
+   * @param signature
+   * @param publicKey?
+   */
+  verifySignature(message: Bytes, signature: Bytes, publicKey?: Bytes): Promise<Boolean>
 }

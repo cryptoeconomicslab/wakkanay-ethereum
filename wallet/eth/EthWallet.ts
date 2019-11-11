@@ -17,24 +17,31 @@ export class EthWallet implements IWallet {
     return Address.from(this.signingKey.address)
   }
   /**
+   * signMessage signed a hex string message
+   * @param message is hex string
+   */
+  public async signMessage(message: Bytes): Promise<Bytes> {
+    return Bytes.fromHexString(
+      joinSignature(this.signingKey.signDigest(arrayify(message.toHexString())))
+    )
+  }
+  /**
+   * verify signature
+   * secp256k1 doesn't need a public key to verify the signature
+   */
+  public async verifySignature(message: Bytes, signature: Bytes): Promise<Boolean> {
+    const recoveredAddress = this.recoverAddress(message, signature)
+    return (recoveredAddress.raw.toLocaleLowerCase() === this.ethersWallet.address.toLocaleLowerCase())
+  }
+  /**
    * recoverAddress
    */
-  public recoverAddress(message: Bytes, signatureBytes: Bytes): Address {
+  private recoverAddress(message: Bytes, signatureBytes: Bytes): Address {
     const signature = ethers.utils.splitSignature(signatureBytes.toHexString())
     const recoverAddress = ethers.utils.recoverAddress(
       message.toHexString(),
       signature
     )
     return Address.from(recoverAddress)
-  }
-
-  /**
-   * signMessage signed a hex string message
-   * @param message is hex string
-   */
-  public signMessage(message: Bytes): Bytes {
-    return Bytes.fromHexString(
-      joinSignature(this.signingKey.signDigest(arrayify(message.toHexString())))
-    )
   }
 }
