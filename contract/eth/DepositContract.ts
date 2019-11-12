@@ -1,5 +1,6 @@
 import * as ethers from 'ethers'
 import { IDepositContract } from '../interfaces/IDepositContract'
+import { Integer } from '../../../src/types/Codables'
 import { Property } from '../../ovm/types'
 
 export class DepositContract implements IDepositContract {
@@ -14,8 +15,8 @@ export class DepositContract implements IDepositContract {
     this.connection = connection
     this.gasLimit = 200000
   }
-  async deposit(amount: number, initialState: Property): Promise<void> {
-    return await this.connection.deposit(amount, initialState, {
+  async deposit(amount: Integer, initialState: Property): Promise<void> {
+    return await this.connection.deposit(amount.data, initialState, {
       gasLimit: this.gasLimit
     })
   }
@@ -24,7 +25,7 @@ export class DepositContract implements IDepositContract {
       gasLimit: this.gasLimit
     })
   }
-  async finalizeExit(exit: Property, depositedRangeId: number): Promise<void> {
+  async finalizeExit(exit: Property, depositedRangeId: Integer): Promise<void> {
     return await this.connection.deposit(exit, depositedRangeId, {
       gasLimit: this.gasLimit
     })
