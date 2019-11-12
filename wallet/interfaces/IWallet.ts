@@ -1,7 +1,9 @@
 import { Address, Bytes } from '../../types/Codables'
+import { Balance } from '../../types'
 
 export interface IWallet {
   getAddress(): Address
+  getL1Balance(tokenAddress?: Address): Promise<Balance>
 
   /**
    * signMessage signed a hex string message
