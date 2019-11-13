@@ -1,4 +1,6 @@
 import { IWallet } from '../interfaces/IWallet'
+import { IDepositContract } from '../../contract'
+import { DepositContract } from '../../contract/eth/DepositContract'
 import * as ethers from 'ethers'
 import { arrayify, joinSignature, parseUnits, SigningKey } from 'ethers/utils'
 import BigNumber from 'bignumber.js'
@@ -66,6 +68,25 @@ export class EthWallet implements IWallet {
     return (recoveredAddress.raw.toLocaleLowerCase() === this.ethersWallet.address.toLocaleLowerCase())
   }
 
+  public getDepositContract(address: Address): IDepositContract {
+    return new DepositContract(this.getConnection(address, DepositContract.abi))
+  }
+
+  /**
+   * Get contract instance which connecting by this wallet.
+   * @param wallet
+   * @param contractAddress
+   * @param abi
+   */
+  private getConnection(contractAddress: Address, abi: string[]) {
+    const ethersWallet = this.ethersWallet
+    const contract = new ethers.Contract(
+      contractAddress.data,
+      abi,
+      ethersWallet.provider
+    )
+    return contract.connect(ethersWallet)
+  }
   /**
    * recoverAddress
    */

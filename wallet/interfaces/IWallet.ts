@@ -1,5 +1,6 @@
 import { Address, Bytes } from '../../types/Codables'
 import { Balance } from '../../types'
+import { IDepositContract } from '../../contract'
 
 export interface IWallet {
   getAddress(): Address
@@ -19,4 +20,10 @@ export interface IWallet {
    * @param publicKey?
    */
   verifySignature(message: Bytes, signature: Bytes, publicKey?: Bytes): Promise<Boolean>
+
+  /**
+   * Gets deposit contract interface for certain L1 platform
+   * @param address
+   */
+  getDepositContract(address: Address): IDepositContract
 }

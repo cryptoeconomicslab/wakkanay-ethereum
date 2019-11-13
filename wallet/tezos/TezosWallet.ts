@@ -1,4 +1,6 @@
 import { IWallet } from '../interfaces/IWallet'
+import { IDepositContract } from '../../contract'
+import { DepositContract } from '../../contract/tezos/DepositContract'
 import { Address, Bytes } from '../../types/Codables'
 import { Balance } from '../../types'
 import BigNumber from 'bignumber.js'
@@ -62,5 +64,12 @@ export class TezosWallet implements IWallet {
       messageBuffer,
       publicKeyBuffer
     )
+  }
+
+  /**
+   * TODO: add implementation
+   */
+  public getDepositContract(address: Address): IDepositContract {
+    return new DepositContract()
   }
 }
