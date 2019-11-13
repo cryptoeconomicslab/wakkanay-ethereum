@@ -1,6 +1,6 @@
 import { IWallet } from '../interfaces/IWallet'
 import * as ethers from 'ethers'
-import { arrayify, joinSignature, SigningKey } from 'ethers/utils'
+import { arrayify, joinSignature, parseUnits, SigningKey } from 'ethers/utils'
 import BigNumber from 'bignumber.js'
 import { Address, Bytes } from '../../types/Codables'
 import { Balance } from '../../types'
@@ -39,7 +39,8 @@ export class EthWallet implements IWallet {
       symbol = await ERC20.symbol()
     } else {
       const balanceRes = await this.ethersWallet.getBalance()
-      value = new BigNumber(balanceRes.toString())
+      const balanceGwei = parseUnits(balanceRes.toString(), 'gwei')
+      value = new BigNumber(balanceGwei.toString())
       decimals = 9
       symbol = 'gwei'
     }
