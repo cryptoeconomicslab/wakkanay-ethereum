@@ -1,11 +1,14 @@
-import { Bytes } from '../../types/Codables'
+import Coder from '../../coder'
+import { Bytes, Integer } from '../../types/Codables'
 import EventLog from './EventLog'
 
 export default class BlockSubmitted {
   constructor(readonly blockNumber: number, readonly root: Bytes) {}
 
   static fromRaw(event: EventLog): BlockSubmitted {
-    // TODO: write this thing.
-    return new BlockSubmitted(0, Bytes.fromString('hello world'))
+    const blockNumber = Coder.decode(Integer.default(), event.values[0])
+    const root = Coder.decode(Bytes.default(), event.values[1])
+
+    return new BlockSubmitted(blockNumber.data, root)
   }
 }
