@@ -6,7 +6,7 @@ import {
   EventHandler,
   ErrorHandler,
   CompletedHandler
-} from '../interfaces/IEventWatcher'
+} from './IEventWatcher'
 import { Bytes } from '../../types/Codables'
 type JsonRpcProvider = ethers.providers.JsonRpcProvider
 
@@ -14,7 +14,15 @@ export interface EventWatcherOptions {
   interval: number
 }
 
-export class EventWatcher implements IEventWatcher {
+export type EthEventWatcherArgType = {
+  endpoint: string
+  kvs: KeyValueStore
+  contractAddress: string
+  contractInterface: ethers.utils.Interface
+  options: EventWatcherOptions
+}
+
+export default class EventWatcher implements IEventWatcher {
   public httpProvider: JsonRpcProvider
   public eventDb: EventDb
   public checkingEvents: Map<string, EventHandler>
@@ -23,13 +31,13 @@ export class EventWatcher implements IEventWatcher {
   public contractAddress: string
   public contractInterface: ethers.utils.Interface
 
-  constructor(
-    endpoint: string,
-    kvs: KeyValueStore,
-    contractAddress: string,
-    contractInterface: ethers.utils.Interface,
-    options: EventWatcherOptions
-  ) {
+  constructor({
+    endpoint,
+    kvs,
+    contractAddress,
+    contractInterface,
+    options
+  }: EthEventWatcherArgType) {
     this.httpProvider = new ethers.providers.JsonRpcProvider(endpoint)
     this.eventDb = new EventDb(kvs)
     this.checkingEvents = new Map<string, EventHandler>()
@@ -41,24 +49,22 @@ export class EventWatcher implements IEventWatcher {
     this.contractInterface = contractInterface
   }
 
-  public addHandler(event: string, handler: EventHandler) {
+  public subscribe(event: string, handler: EventHandler) {
+    // FIXME: add multiple handlers to one event
     this.checkingEvents.set(event, handler)
   }
 
-  public removeHandler(event: string) {
+  public unsubscribe(event: string, handler: EventHandler) {
     this.checkingEvents.delete(event)
   }
 
-  public async initPolling(
-    handler: CompletedHandler,
-    errorHandler?: ErrorHandler
-  ) {
+  public async start(handler: CompletedHandler, errorHandler?: ErrorHandler) {
     try {
       const block = await this.httpProvider.getBlock('latest')
       const loaded = await this.eventDb.getLastLoggedBlock(
         Bytes.fromString(this.contractAddress)
       )
-      await this.polling(loaded, block.number, handler)
+      await this.poll(loaded, block.number, handler)
     } catch (e) {
       console.log(e)
       if (errorHandler) {
@@ -66,7 +72,7 @@ export class EventWatcher implements IEventWatcher {
       }
     }
     this.timer = setTimeout(async () => {
-      await this.initPolling(handler, errorHandler)
+      await this.start(handler, errorHandler)
     }, this.options.interval)
   }
 
@@ -76,7 +82,7 @@ export class EventWatcher implements IEventWatcher {
     }
   }
 
-  public async polling(
+  public async poll(
     fromBlockNumber: number,
     blockNumber: number,
     completedHandler: CompletedHandler
