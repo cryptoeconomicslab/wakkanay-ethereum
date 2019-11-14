@@ -33,7 +33,11 @@ export class EthWallet implements IWallet {
   public async getL1Balance(tokenAddress?: Address): Promise<Balance> {
     let value: BigNumber, decimals: number, symbol: string
     if (tokenAddress) {
-      const contract = new ethers.Contract(tokenAddress.raw, ERC20abi, this.ethersWallet.provider)
+      const contract = new ethers.Contract(
+        tokenAddress.raw,
+        ERC20abi,
+        this.ethersWallet.provider
+      )
       const ERC20 = contract.connect(this.ethersWallet)
       const balanceRes = await ERC20.balanceOf(this.getAddress().raw)
       value = new BigNumber(balanceRes.toString())
@@ -63,9 +67,15 @@ export class EthWallet implements IWallet {
    * verify signature
    * secp256k1 doesn't need a public key to verify the signature
    */
-  public async verifySignature(message: Bytes, signature: Bytes): Promise<Boolean> {
+  public async verifySignature(
+    message: Bytes,
+    signature: Bytes
+  ): Promise<Boolean> {
     const recoveredAddress = this.recoverAddress(message, signature)
-    return (recoveredAddress.raw.toLocaleLowerCase() === this.ethersWallet.address.toLocaleLowerCase())
+    return (
+      recoveredAddress.raw.toLocaleLowerCase() ===
+      this.ethersWallet.address.toLocaleLowerCase()
+    )
   }
 
   public getDepositContract(address: Address): IDepositContract {
