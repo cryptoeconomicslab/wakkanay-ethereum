@@ -87,6 +87,7 @@ export class EthWallet implements IWallet {
     )
     return contract.connect(ethersWallet)
   }
+
   /**
    * recoverAddress
    */

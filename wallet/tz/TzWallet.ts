@@ -13,18 +13,18 @@ import {
   TezosMessageUtils,
 } from 'conseiljs'
 
-export class TezosWallet implements IWallet {
+export class TzWallet implements IWallet {
   constructor(
-    private tezosWallet: KeyStore,
+    private TzWallet: KeyStore,
     private conseilServerinfo: ConseilServerInfo
   ) {}
 
-  public getTezosWallet(): KeyStore {
-    return this.tezosWallet
+  public getTzWallet(): KeyStore {
+    return this.TzWallet
   }
 
   public getAddress(): Address {
-    return Address.from(this.tezosWallet.publicKeyHash)
+    return Address.from(this.TzWallet.publicKeyHash)
   }
 
   /**
@@ -43,7 +43,7 @@ export class TezosWallet implements IWallet {
    */
   public async signMessage(message: Bytes): Promise<Bytes> {
     const messageBuffer = Buffer.from(message.toHexString())
-    const privateKeyBuffer = TezosMessageUtils.writeKeyWithHint(this.tezosWallet.privateKey, 'edsk')
+    const privateKeyBuffer = TezosMessageUtils.writeKeyWithHint(this.TzWallet.privateKey, 'edsk')
     const signatureBuffer = await CryptoUtils.signDetached(messageBuffer, privateKeyBuffer)
     return Bytes.fromHexString(
       signatureBuffer.toString('hex')
