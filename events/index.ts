@@ -1,3 +1,3 @@
+import EventWatcher from './watcher/EventWatcher'
 export * from './EventDb'
-export * from './eth/EventWatcher'
-export * from './interfaces/IEventWatcher'
+export { EventWatcher }
