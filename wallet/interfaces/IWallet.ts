@@ -19,7 +19,11 @@ export interface IWallet {
    * @param signature
    * @param publicKey?
    */
-  verifySignature(message: Bytes, signature: Bytes, publicKey?: Bytes): Promise<Boolean>
+  verifySignature(
+    message: Bytes,
+    signature: Bytes,
+    publicKey?: Bytes
+  ): Promise<Boolean>
 
   /**
    * Gets deposit contract interface for certain L1 platform

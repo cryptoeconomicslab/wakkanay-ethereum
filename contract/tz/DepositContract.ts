@@ -8,5 +8,8 @@ import { Property } from '../../ovm/types'
 export class DepositContract implements IDepositContract {
   async deposit(amount: Integer, initialState: Property): Promise<void> {}
   async finalizeCheckpoint(checkpoint: Property): Promise<void> {}
-  async finalizeExit(exit: Property, depositedRangeId: Integer): Promise<void> {}
+  async finalizeExit(
+    exit: Property,
+    depositedRangeId: Integer
+  ): Promise<void> {}
 }
