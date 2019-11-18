@@ -66,7 +66,7 @@ export class TzWallet implements IWallet {
     message: Bytes,
     signature: Bytes
   ): Promise<boolean> {
-    const publicKey = Bytes.fromString(this.getAddress().raw)
+    const publicKey = Bytes.fromString(this.TzWallet.publicKey)
     return ed25519Verifier.verify(message, signature, publicKey)
   }
 
