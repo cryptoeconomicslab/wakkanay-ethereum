@@ -4,7 +4,6 @@ import { DepositContract } from '../../contract/tz/DepositContract'
 import { Address, Bytes } from '../../types/Codables'
 import { Balance } from '../../types'
 import BigNumber from 'bignumber.js'
-import sodiumsumo from 'libsodium-wrappers-sumo'
 import {
   ConseilServerInfo,
   CryptoUtils,
@@ -12,6 +11,7 @@ import {
   TezosConseilClient,
   TezosMessageUtils
 } from 'conseiljs'
+import { ed25519Verifier } from '../../verifiers'
 
 export class TzWallet implements IWallet {
   constructor(
@@ -66,19 +66,8 @@ export class TzWallet implements IWallet {
     message: Bytes,
     signature: Bytes
   ): Promise<boolean> {
-    const publicKey = this.getAddress()
-    const messageBuffer = Buffer.from(message.toHexString())
-    const publicKeyBuffer = TezosMessageUtils.writeKeyWithHint(
-      publicKey.raw,
-      'edpk'
-    )
-    const signatureBuffer = Buffer.from(signature.toHexString().slice(2), 'hex')
-    await sodiumsumo.ready
-    return sodiumsumo.crypto_sign_verify_detached(
-      signatureBuffer,
-      messageBuffer,
-      publicKeyBuffer
-    )
+    const publicKey = Bytes.fromString(this.getAddress().raw)
+    return ed25519Verifier.verify(message, signature, publicKey)
   }
 
   /**
