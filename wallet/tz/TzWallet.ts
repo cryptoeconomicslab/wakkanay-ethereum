@@ -1,6 +1,6 @@
 import { IWallet } from '../interfaces/IWallet'
 import { IDepositContract } from '../../contract'
-import { DepositContract } from '../../contract/tezos/DepositContract'
+import { DepositContract } from '../../contract/tz/DepositContract'
 import { Address, Bytes } from '../../types/Codables'
 import { Balance } from '../../types'
 import BigNumber from 'bignumber.js'
