@@ -6,7 +6,7 @@ import { arrayify, joinSignature, parseUnits, SigningKey } from 'ethers/utils'
 import BigNumber from 'bignumber.js'
 import { Address, Bytes } from '../../types/Codables'
 import { Balance } from '../../types'
-import { secp2561kVerifier } from '../../verifiers'
+import { secp256k1Verifier } from '../../verifiers'
 
 const ERC20abi = [
   'function balanceOf(address tokenOwner) view returns (uint)',
@@ -73,7 +73,7 @@ export class EthWallet implements IWallet {
     signature: Bytes
   ): Promise<boolean> {
     const publicKey = Bytes.fromString(this.getAddress().raw)
-    return secp2561kVerifier.verify(message, signature, publicKey)
+    return secp256k1Verifier.verify(message, signature, publicKey)
   }
 
   public getDepositContract(address: Address): IDepositContract {
