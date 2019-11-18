@@ -18,6 +18,6 @@ export class TzWalletFactory implements IWalletFactory {
   }
 
   async fromPrivateKey(privateKey: string): Promise<IWallet> {
-    return new TzWallet(await TezosWalletUtil.restoreIdentityWithSecretKey(privateKey), this.conseilServerinfo)
+    return new TzWallet(await TezosWalletUtil.restoreIdentityWithSecretKey(privateKey), this.conseilServerInfo)
   }
 }
