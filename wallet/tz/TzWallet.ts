@@ -62,14 +62,14 @@ export class TzWallet implements IWallet {
    * verify signature
    * only support Ed25519 key (tz1)
    */
-  public async verifySignature(
+  public async verifyMySignature(
     message: Bytes,
-    signature: Bytes,
-    publicKey: Bytes
-  ): Promise<Boolean> {
+    signature: Bytes
+  ): Promise<boolean> {
+    const publicKey = this.getAddress()
     const messageBuffer = Buffer.from(message.toHexString())
     const publicKeyBuffer = TezosMessageUtils.writeKeyWithHint(
-      publicKey.intoString(),
+      publicKey.raw,
       'edpk'
     )
     const signatureBuffer = Buffer.from(signature.toHexString().slice(2), 'hex')

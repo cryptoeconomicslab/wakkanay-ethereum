@@ -6,6 +6,7 @@ import { arrayify, joinSignature, parseUnits, SigningKey } from 'ethers/utils'
 import BigNumber from 'bignumber.js'
 import { Address, Bytes } from '../../types/Codables'
 import { Balance } from '../../types'
+import { secp2561kVerifier } from '../../verifiers'
 
 const ERC20abi = [
   'function balanceOf(address tokenOwner) view returns (uint)',
@@ -67,15 +68,12 @@ export class EthWallet implements IWallet {
    * verify signature
    * secp256k1 doesn't need a public key to verify the signature
    */
-  public async verifySignature(
+  public async verifyMySignature(
     message: Bytes,
     signature: Bytes
-  ): Promise<Boolean> {
-    const recoveredAddress = this.recoverAddress(message, signature)
-    return (
-      recoveredAddress.raw.toLocaleLowerCase() ===
-      this.ethersWallet.address.toLocaleLowerCase()
-    )
+  ): Promise<boolean> {
+    const publicKey = Bytes.fromString(this.getAddress().raw)
+    return secp2561kVerifier.verify(message, signature, publicKey)
   }
 
   public getDepositContract(address: Address): IDepositContract {
@@ -96,17 +94,5 @@ export class EthWallet implements IWallet {
       ethersWallet.provider
     )
     return contract.connect(ethersWallet)
-  }
-
-  /**
-   * recoverAddress
-   */
-  private recoverAddress(message: Bytes, signatureBytes: Bytes): Address {
-    const signature = ethers.utils.splitSignature(signatureBytes.toHexString())
-    const recoverAddress = ethers.utils.recoverAddress(
-      message.toHexString(),
-      signature
-    )
-    return Address.from(recoverAddress)
   }
 }
