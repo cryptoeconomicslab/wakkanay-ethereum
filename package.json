@@ -1,0 +1,54 @@
+{
+  "name": "wakkanay-ethereum",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts"
+  ],
+  "scripts": {
+    "build": "tsc --build ./tsconfig.json",
+    "test": "jest",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "plasma"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "wakkanay": "git+https://github.com/cryptoeconomicslab/wakkanay.git"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.20",
+    "@typescript-eslint/eslint-plugin": "^2.5.0",
+    "@typescript-eslint/parser": "^2.5.0",
+    "eslint": "^6.6.0",
+    "eslint-config-prettier": "^6.5.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "jest": "^24.9.0",
+    "prettier": "^1.18.2",
+    "ts-jest": "^24.1.0",
+    "ts-node": "^8.4.1",
+    "typescript": "^3.6.4"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testMatch": [
+      "**/__tests__/**/?(*.)+(spec|test).(ts|js)",
+      "**/?(*.)+(spec|test).ts"
+    ],
+    "moduleFileExtensions": [
+      "js",
+      "ts"
+    ],
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "tsconfig.json"
+      }
+    }
+  }
+}
