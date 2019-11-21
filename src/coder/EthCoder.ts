@@ -9,7 +9,7 @@ import {
   Tuple,
   Struct
 } from 'wakkanay/dist/types/Codables'
-import { AbiDecodeError } from 'wakkanay/dist/coder/Error'
+import { AbiDecodeError } from './Error'
 
 // Get Ethereum type representation of Codables.
 export function getEthTypeStringRep(v: Codable): string {
