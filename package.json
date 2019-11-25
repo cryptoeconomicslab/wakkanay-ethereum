@@ -19,6 +19,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "ethers": "^4.0.40",
     "wakkanay": "git+https://github.com/cryptoeconomicslab/wakkanay.git"
   },
   "devDependencies": {

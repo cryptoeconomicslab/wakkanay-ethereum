@@ -1,13 +1,15 @@
-import { contract } from 'wakkanay'
-import { IWallet } from 'wakkanay/dist/wallet/interfaces/IWallet'
-import IDepositContract = contract.IDepositContract
+import { contract, wallet, types } from 'wakkanay'
 import { DepositContract } from '../contract/DepositContract'
 import * as ethers from 'ethers'
 import { arrayify, joinSignature, parseUnits, SigningKey } from 'ethers/utils'
 import BigNumber from 'bignumber.js'
-import { Address, Bytes } from 'wakkanay/dist/types/Codables'
-import { Balance } from 'wakkanay/dist/types'
 import { secp256k1Verifier } from 'wakkanay/dist/verifiers'
+
+import IWallet = wallet.IWallet
+import IDepositContract = contract.IDepositContract
+import Address = types.Address
+import Bytes = types.Bytes
+import Balance = types.Balance
 
 const ERC20abi = [
   'function balanceOf(address tokenOwner) view returns (uint)',

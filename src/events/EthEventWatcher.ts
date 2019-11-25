@@ -1,13 +1,12 @@
 import * as ethers from 'ethers'
-import { EventDb } from 'wakkanay/dist/events/EventDb'
-import { KeyValueStore } from 'wakkanay/dist/db'
-import {
-  IEventWatcher,
-  EventHandler,
-  ErrorHandler,
-  CompletedHandler
-} from 'wakkanay/dist/events/watcher/IEventWatcher'
-import { Bytes } from 'wakkanay/dist/types/Codables'
+import { db, events, types } from 'wakkanay'
+import EventDb = events.EventDb
+import KeyValueStore = db.KeyValueStore
+import IEventWatcher = events.IEventWatcher
+import EventHandler = events.EventHandler
+import ErrorHandler = events.ErrorHandler
+import CompletedHandler = events.CompletedHandler
+import Bytes = types.Bytes
 type JsonRpcProvider = ethers.providers.JsonRpcProvider
 
 export interface EventWatcherOptions {
@@ -27,7 +26,7 @@ export default class EventWatcher implements IEventWatcher {
   public eventDb: EventDb
   public checkingEvents: Map<string, EventHandler>
   public options: EventWatcherOptions
-  public timer?: NodeJS.Timer
+  public timer?: number
   public contractAddress: string
   public contractInterface: ethers.utils.Interface
 

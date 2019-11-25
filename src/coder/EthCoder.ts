@@ -1,14 +1,13 @@
 import { AbiCoder, ParamType, arrayify } from 'ethers/utils'
-import { Coder } from 'wakkanay/dist/coder/Coder'
-import {
-  Codable,
-  Address,
-  Bytes,
-  Integer,
-  List,
-  Tuple,
-  Struct
-} from 'wakkanay/dist/types/Codables'
+import { coder, types } from 'wakkanay'
+import Coder = coder.Coder
+import Codable = types.Codable
+import Address = types.Address
+import Bytes = types.Bytes
+import Integer = types.Integer
+import List = types.List
+import Tuple = types.Tuple
+import Struct = types.Struct
 import { AbiDecodeError } from './Error'
 
 // Get Ethereum type representation of Codables.
