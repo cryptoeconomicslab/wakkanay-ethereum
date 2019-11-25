@@ -1,6 +1,6 @@
 import * as ethers from 'ethers'
-import { Bytes } from 'wakkanay/dist/types/Codables'
-import { contract } from 'wakkanay'
+import { contract, types } from 'wakkanay'
+import Bytes = types.Bytes
 import ICommitmentContract = contract.ICommitmentContract
 
 export class CommitmentContract implements ICommitmentContract {

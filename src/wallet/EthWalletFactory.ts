@@ -1,7 +1,8 @@
-import { IWallet } from 'wakkanay/dist/wallet/interfaces/IWallet'
-import { IWalletFactory } from 'wakkanay/dist/wallet/interfaces/IWalletFactory'
+import { wallet } from 'wakkanay'
 import { EthWallet } from './EthWallet'
 import * as ethers from 'ethers'
+import IWallet = wallet.IWallet
+import IWalletFactory = wallet.IWalletFactory
 import Provider = ethers.providers.Provider
 
 export class EthWalletFactory implements IWalletFactory {
