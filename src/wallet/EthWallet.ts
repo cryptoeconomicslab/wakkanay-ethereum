@@ -80,7 +80,7 @@ export class EthWallet implements IWallet {
   }
 
   public getDepositContract(address: Address): IDepositContract {
-    return new DepositContract(this.getConnection(address, DepositContract.abi))
+    return new DepositContract(address, this.ethersWallet.provider)
   }
 
   /**
