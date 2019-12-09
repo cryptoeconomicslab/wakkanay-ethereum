@@ -1,5 +1,5 @@
 import * as ethers from 'ethers'
-import { Integer } from 'wakkanay/dist/types/Codables'
+import { Integer, Address } from 'wakkanay/dist/types/Codables'
 import { Property } from 'wakkanay/dist/ovm/types'
 import { contract } from 'wakkanay'
 import IDepositContract = contract.IDepositContract
@@ -12,8 +12,12 @@ export class DepositContract implements IDepositContract {
     'function finalizeCheckpoint(tuple(address, bytes[]) _checkpoint)',
     'function finalizeExit(tuple(address, bytes[]) _exit, uint256 _depositedRangeId)'
   ]
-  constructor(connection: ethers.Contract) {
-    this.connection = connection
+  constructor(address: Address, provider: ethers.providers.Provider) {
+    this.connection = new ethers.Contract(
+      address.raw,
+      DepositContract.abi,
+      provider
+    )
     this.gasLimit = 200000
   }
   async deposit(amount: Integer, initialState: Property): Promise<void> {
