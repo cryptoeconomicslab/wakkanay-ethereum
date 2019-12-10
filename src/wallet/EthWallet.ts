@@ -10,6 +10,7 @@ import Address = types.Address
 import Bytes = types.Bytes
 import Balance = types.Balance
 import secp256k1Verifier = verifiers.secp256k1Verifier
+import { InMemoryKeyValueStore } from 'wakkanay/dist/db'
 
 const ERC20abi = [
   'function balanceOf(address tokenOwner) view returns (uint)',
@@ -79,8 +80,13 @@ export class EthWallet implements IWallet {
     return secp256k1Verifier.verify(message, signature, publicKey)
   }
 
+  // FIXME: should return singleton deposit contract instance
   public getDepositContract(address: Address): IDepositContract {
-    return new DepositContract(address, this.ethersWallet.provider)
+    return new DepositContract(
+      address,
+      new InMemoryKeyValueStore(Bytes.fromString('test')),
+      this.ethersWallet.provider
+    )
   }
 
   /**
