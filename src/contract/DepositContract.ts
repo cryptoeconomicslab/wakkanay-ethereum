@@ -1,5 +1,5 @@
 import * as ethers from 'ethers'
-import { Integer, Address, Bytes } from 'wakkanay/dist/types/Codables'
+import { Integer, Address, Bytes, Struct } from 'wakkanay/dist/types/Codables'
 import { Property } from 'wakkanay/dist/ovm/types'
 import { KeyValueStore } from 'wakkanay/dist/db'
 import { contract } from 'wakkanay'
@@ -51,22 +51,18 @@ export class DepositContract implements IDepositContract {
     })
   }
 
-  subscribeDeposit(
-    handler: (amount: Integer, initialState: [Address, Bytes[]]) => void
+  subscribeCheckpointFinalized(
+    handler: (checkpointId: Bytes, checkpoint: Property) => void
   ) {
-    this.eventWatcher.subscribe('deposit', (log: EventLog) => {
-      const [amount, initialState] = log.values
-      handler(Integer.from(amount), [
-        Address.from(initialState[0]),
-        initialState[1].map((b: Uint8Array) => Bytes.from(b))
-      ])
-    })
-  }
-
-  subscribeCheckpointFinalized(handler: (checkpointId: Bytes) => void) {
     this.eventWatcher.subscribe('CheckpointFinalized', (log: EventLog) => {
-      const [checkpointId] = log.values
-      handler(Bytes.from(checkpointId))
+      const [checkpointId, checkpoint] = log.values
+      handler(
+        Bytes.from(checkpointId),
+        new Property(
+          Address.from(checkpoint[0]),
+          checkpoint[1].map((b: Uint8Array) => Bytes.from(b))
+        )
+      )
     })
   }
 
