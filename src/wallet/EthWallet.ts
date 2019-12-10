@@ -10,7 +10,7 @@ import Address = types.Address
 import Bytes = types.Bytes
 import Balance = types.Balance
 import secp256k1Verifier = verifiers.secp256k1Verifier
-import { InMemoryKeyValueStore, KeyValueStore } from 'wakkanay/dist/db'
+import { KeyValueStore } from 'wakkanay/dist/db'
 
 const ERC20abi = [
   'function balanceOf(address tokenOwner) view returns (uint)',
