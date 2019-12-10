@@ -1,11 +1,12 @@
 import * as ethers from 'ethers'
-import { Integer, Address, Bytes, Struct } from 'wakkanay/dist/types/Codables'
+import { Integer, Address, Bytes } from 'wakkanay/dist/types/Codables'
 import { Property } from 'wakkanay/dist/ovm/types'
 import { KeyValueStore } from 'wakkanay/dist/db'
 import { contract } from 'wakkanay'
 import IDepositContract = contract.IDepositContract
 import EthEventWatcher from '../events'
 import EventLog from 'wakkanay/dist/events/types/EventLog'
+import EthCoder from '../coder/EthCoder'
 
 export class DepositContract implements IDepositContract {
   private eventWatcher: EthEventWatcher
@@ -52,17 +53,17 @@ export class DepositContract implements IDepositContract {
   }
 
   subscribeCheckpointFinalized(
-    handler: (checkpointId: Bytes, checkpoint: Property) => void
+    handler: (
+      checkpointId: Bytes,
+      checkpoint: [[number, number], Property]
+    ) => void
   ) {
     this.eventWatcher.subscribe('CheckpointFinalized', (log: EventLog) => {
       const [checkpointId, checkpoint] = log.values
-      handler(
-        Bytes.from(checkpointId),
-        new Property(
-          Address.from(checkpoint[0]),
-          checkpoint[1].map((b: Uint8Array) => Bytes.from(b))
-        )
+      const stateUpdate = Property.fromStruct(
+        EthCoder.decode(Property.getParamType(), checkpoint[1])
       )
+      handler(Bytes.from(checkpointId), [checkpoint[0], stateUpdate])
     })
   }
 
