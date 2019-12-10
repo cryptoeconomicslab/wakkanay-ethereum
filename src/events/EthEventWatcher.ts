@@ -10,7 +10,7 @@ import Bytes = types.Bytes
 type JsonRpcProvider = ethers.providers.JsonRpcProvider
 
 export interface EventWatcherOptions {
-  interval: number
+  interval?: number
 }
 
 export type EthEventWatcherArgType = {
@@ -18,7 +18,7 @@ export type EthEventWatcherArgType = {
   kvs: KeyValueStore
   contractAddress: string
   contractInterface: ethers.utils.Interface
-  options: EventWatcherOptions
+  options?: EventWatcherOptions
 }
 
 export default class EventWatcher implements IEventWatcher {

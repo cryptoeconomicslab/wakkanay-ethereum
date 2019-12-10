@@ -10,6 +10,7 @@ import Address = types.Address
 import Bytes = types.Bytes
 import Balance = types.Balance
 import secp256k1Verifier = verifiers.secp256k1Verifier
+import { KeyValueStore } from 'wakkanay/dist/db'
 
 const ERC20abi = [
   'function balanceOf(address tokenOwner) view returns (uint)',
@@ -20,8 +21,9 @@ const ERC20abi = [
 export class EthWallet implements IWallet {
   private ethersWallet: ethers.Wallet
   private signingKey: SigningKey
+  private depositContractMap: Map<Address, DepositContract> = new Map()
 
-  constructor(ethersWallet: ethers.Wallet) {
+  constructor(ethersWallet: ethers.Wallet, private db: KeyValueStore) {
     this.ethersWallet = ethersWallet
     this.signingKey = new SigningKey(this.ethersWallet.privateKey)
   }
@@ -79,8 +81,26 @@ export class EthWallet implements IWallet {
     return secp256k1Verifier.verify(message, signature, publicKey)
   }
 
-  public getDepositContract(address: Address): IDepositContract {
-    return new DepositContract(address, this.ethersWallet.provider)
+  /**
+   * given deposit contract address, returns instance of DepositContract
+   * if instance is already created and store in a map, returns it immediately
+   * if instance is absent for given address, create new instance and store it
+   * in the map and returns the instance
+   * TODO: how  to manage event listener which is already subscribed to another deposit contract?
+   * should we automatically register to newly added contract or just let user to manage it?
+   * @param address deposit contract address
+   */
+  public async getDepositContract(address: Address): Promise<IDepositContract> {
+    let contract = this.depositContractMap.get(address)
+    if (contract) {
+      return contract
+    }
+    const kvs = await this.db.bucket(Bytes.fromString(`deposit_${address.raw}`))
+
+    contract = new DepositContract(address, kvs, this.ethersWallet.provider)
+
+    this.depositContractMap.set(address, contract)
+    return contract
   }
 
   /**
