@@ -55,7 +55,7 @@ export class DepositContract implements IDepositContract {
   subscribeCheckpointFinalized(
     handler: (
       checkpointId: Bytes,
-      checkpoint: [[number, number], Property]
+      checkpoint: [[bigint, bigint], Property]
     ) => void
   ) {
     this.eventWatcher.subscribe('CheckpointFinalized', (log: EventLog) => {
