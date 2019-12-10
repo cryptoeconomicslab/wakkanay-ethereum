@@ -3,6 +3,7 @@ const { EthWallet } = require('../../src/wallet')
 const ethers = require('ethers')
 const { Address, Bytes } = require('wakkanay/dist/types/Codables')
 const { DepositContract } = require('../../src/contract/DepositContract')
+const { InMemoryKeyValueStore } = require('wakkanay/dist/db')
 
 const mockWallet = jest.fn().mockImplementation(privateKey => {
   return {
@@ -41,7 +42,8 @@ describe('EthWallet', () => {
     wallet = new EthWallet(
       new ethers.Wallet(
         '0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3'
-      )
+      ),
+      new InMemoryKeyValueStore(Bytes.fromString('test'))
     )
   })
   describe('signMessage', () => {
@@ -98,7 +100,7 @@ describe('EthWallet', () => {
   describe('getDepositContract', () => {
     it('succeed to get deposit contract', async () => {
       const address = Address.from(ethers.constants.AddressZero)
-      const depositContract = wallet.getDepositContract(address)
+      const depositContract = await wallet.getDepositContract(address)
       expect(depositContract).toBeInstanceOf(DepositContract)
     })
   })
