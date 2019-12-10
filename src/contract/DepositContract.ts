@@ -18,7 +18,7 @@ export class DepositContract implements IDepositContract {
     'function finalizeExit(tuple(address, bytes[]) _exit, uint256 _depositedRangeId)'
   ]
   constructor(
-    address: Address,
+    readonly address: Address,
     eventDb: KeyValueStore,
     provider: ethers.providers.Provider
   ) {
