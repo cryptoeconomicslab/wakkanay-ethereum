@@ -97,11 +97,4 @@ describe('EthWallet', () => {
       expect(balance.symbol).toBe('DAI')
     })
   })
-  describe('getDepositContract', () => {
-    it('succeed to get deposit contract', async () => {
-      const address = Address.from(ethers.constants.AddressZero)
-      const depositContract = await wallet.getDepositContract(address)
-      expect(depositContract).toBeInstanceOf(DepositContract)
-    })
-  })
 })
