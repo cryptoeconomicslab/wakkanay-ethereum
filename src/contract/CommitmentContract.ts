@@ -1,6 +1,6 @@
 import * as ethers from 'ethers'
 import { contract } from 'wakkanay'
-import { Address, Bytes, Integer } from 'wakkanay/dist/types'
+import { Address, Bytes, BigNumber } from 'wakkanay/dist/types'
 import ICommitmentContract = contract.ICommitmentContract
 import EventLog from 'wakkanay/dist/events/types/EventLog'
 import { KeyValueStore } from 'wakkanay/dist/db'
@@ -29,18 +29,18 @@ export class CommitmentContract implements ICommitmentContract {
     })
     this.gasLimit = 200000
   }
-  async submit(blockNumber: number, root: Bytes) {
+  async submit(blockNumber: BigNumber, root: Bytes) {
     return await this.connection.submit_root(blockNumber, root, {
       gasLimit: this.gasLimit
     })
   }
 
   subscribeBlockSubmitted(
-    handler: (blockNumber: Integer, root: Bytes) => void
+    handler: (blockNumber: BigNumber, root: Bytes) => void
   ) {
     this.eventWatcher.subscribe('CheckpointFinalized', (log: EventLog) => {
       const [blockNumber, root] = log.values
-      handler(Integer.from(blockNumber), Bytes.from(root))
+      handler(BigNumber.from(blockNumber), Bytes.from(root))
     })
   }
 }
