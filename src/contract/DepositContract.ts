@@ -1,12 +1,11 @@
 import * as ethers from 'ethers'
-import { Integer, Address, Bytes } from 'wakkanay/dist/types/Codables'
+import { BigNumber, Integer, Address, Bytes, Range } from 'wakkanay/dist/types'
 import { Property } from 'wakkanay/dist/ovm/types'
 import { KeyValueStore } from 'wakkanay/dist/db'
 import { contract } from 'wakkanay'
 import IDepositContract = contract.IDepositContract
 import EthEventWatcher from '../events'
 import EventLog from 'wakkanay/dist/events/types/EventLog'
-import EthCoder from '../coder/EthCoder'
 
 export class DepositContract implements IDepositContract {
   private eventWatcher: EthEventWatcher
@@ -14,6 +13,8 @@ export class DepositContract implements IDepositContract {
   readonly gasLimit: number
 
   public static abi = [
+    'event CheckpointFinalized(bytes32 checkpointId, tuple(tuple(uint256, uint256), tuple(address, bytes[])) checkpoint)',
+    'event ExitFinalized(bytes32 exitId)',
     'function deposit(uint256 _amount, tuple(address, bytes[]) _initialState)',
     'function finalizeCheckpoint(tuple(address, bytes[]) _checkpoint)',
     'function finalizeExit(tuple(address, bytes[]) _exit, uint256 _depositedRangeId)'
@@ -21,49 +22,63 @@ export class DepositContract implements IDepositContract {
   constructor(
     readonly address: Address,
     eventDb: KeyValueStore,
-    provider: ethers.providers.Provider
+    signer: ethers.Signer
   ) {
     this.connection = new ethers.Contract(
-      address.raw,
+      address.data,
       DepositContract.abi,
-      provider
+      signer
     )
     this.gasLimit = 200000
     this.eventWatcher = new EthEventWatcher({
       endpoint: process.env.MAIN_CHAIN_ENDPOINT as string,
       kvs: eventDb,
-      contractAddress: address.raw,
+      contractAddress: address.data,
       contractInterface: this.connection.interface
     })
   }
   async deposit(amount: Integer, initialState: Property): Promise<void> {
-    return await this.connection.deposit(amount.data, initialState, {
-      gasLimit: this.gasLimit
-    })
+    return await this.connection.deposit(
+      amount.data,
+      [initialState.deciderAddress.data, initialState.inputs],
+      {
+        gasLimit: this.gasLimit
+      }
+    )
   }
   async finalizeCheckpoint(checkpoint: Property): Promise<void> {
+    // TODO: fix
     return await this.connection.deposit(checkpoint, {
       gasLimit: this.gasLimit
     })
   }
   async finalizeExit(exit: Property, depositedRangeId: Integer): Promise<void> {
+    // TODO: fix
     return await this.connection.deposit(exit, depositedRangeId, {
       gasLimit: this.gasLimit
     })
   }
 
   subscribeCheckpointFinalized(
-    handler: (
-      checkpointId: Bytes,
-      checkpoint: [[bigint, bigint], Property]
-    ) => void
+    handler: (checkpointId: Bytes, checkpoint: [Range, Property]) => void
   ) {
     this.eventWatcher.subscribe('CheckpointFinalized', (log: EventLog) => {
-      const [checkpointId, checkpoint] = log.values
-      const stateUpdate = Property.fromStruct(
-        EthCoder.decode(Property.getParamType(), checkpoint[1])
+      const checkpointId = log.values[0]
+      const checkpoint = log.values[1]
+      const stateUpdate = new Property(
+        Address.from(checkpoint[1][0]),
+        checkpoint[1][1].map(Bytes.fromHexString)
       )
-      handler(Bytes.from(checkpointId), [checkpoint[0], stateUpdate])
+      const subrange = new Range(
+        BigNumber.from(checkpoint[0][0].toNumber()),
+        BigNumber.from(checkpoint[0][1].toNumber())
+      )
+
+      handler(Bytes.from(checkpointId), [subrange, stateUpdate])
+    })
+    this.eventWatcher.cancel()
+    this.eventWatcher.start(() => {
+      console.log('event polled')
     })
   }
 
@@ -71,6 +86,10 @@ export class DepositContract implements IDepositContract {
     this.eventWatcher.subscribe('ExitFinalized', (log: EventLog) => {
       const [exitId] = log.values
       handler(Bytes.from(exitId))
+    })
+    this.eventWatcher.cancel()
+    this.eventWatcher.start(() => {
+      console.log('event polled')
     })
   }
 }

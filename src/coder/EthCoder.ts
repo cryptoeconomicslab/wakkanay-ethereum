@@ -8,11 +8,12 @@ import Integer = types.Integer
 import List = types.List
 import Tuple = types.Tuple
 import Struct = types.Struct
+import BigNumber = types.BigNumber
 import { AbiDecodeError } from './Error'
 
 // Get Ethereum type representation of Codables.
 export function getEthTypeStringRep(v: Codable): string {
-  if (v instanceof Integer) {
+  if (v instanceof Integer || v instanceof BigNumber) {
     return 'uint256'
   } else if (v instanceof Bytes) {
     return 'bytes'
@@ -84,6 +85,8 @@ export function getEthParamType(v: Codable): ParamType {
 export function decodeInner(d: Codable, input: any): Codable {
   if (d instanceof Integer) {
     d.setData(input.toNumber())
+  } else if (d instanceof BigNumber) {
+    d.setData(BigInt(input))
   } else if (d instanceof Address) {
     d.setData(input)
   } else if (d instanceof Bytes) {
@@ -120,9 +123,8 @@ const EthCoder: Coder = {
    * @param input codable object to encode
    */
   encode(input: Codable): Bytes {
-    return Bytes.fromHexString(
-      abiCoder.encode([getEthParamType(input)], [input.raw])
-    )
+    const data = abiCoder.encode([getEthParamType(input)], [input.raw])
+    return Bytes.fromHexString(data)
   },
   /**
    * decode given hex string into given codable object

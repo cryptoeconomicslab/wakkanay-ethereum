@@ -36,12 +36,12 @@ export class EthWallet implements IWallet {
     let value: BigNumber, decimals: number, symbol: string
     if (tokenAddress) {
       const contract = new ethers.Contract(
-        tokenAddress.raw,
+        tokenAddress.data,
         ERC20abi,
         this.ethersWallet.provider
       )
       const ERC20 = contract.connect(this.ethersWallet)
-      const balanceRes = await ERC20.balanceOf(this.getAddress().raw)
+      const balanceRes = await ERC20.balanceOf(this.getAddress().data)
       value = new BigNumber(balanceRes.toString())
       decimals = Number(await ERC20.decimals())
       symbol = await ERC20.symbol()
@@ -73,7 +73,7 @@ export class EthWallet implements IWallet {
     message: Bytes,
     signature: Bytes
   ): Promise<boolean> {
-    const publicKey = Bytes.fromString(this.getAddress().raw)
+    const publicKey = Bytes.fromString(this.getAddress().data)
     return secp256k1Verifier.verify(message, signature, publicKey)
   }
 

@@ -105,6 +105,7 @@ export default class EventWatcher implements IEventWatcher {
       })
       .map(e => {
         const logDesc = this.contractInterface.parseLog(e)
+        if (!logDesc) return false
         const handler = this.checkingEvents.get(logDesc.name)
         if (handler) {
           handler(logDesc)
