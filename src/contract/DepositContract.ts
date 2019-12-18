@@ -70,8 +70,8 @@ export class DepositContract implements IDepositContract {
         checkpoint[1][1].map(Bytes.fromHexString)
       )
       const subrange = new Range(
-        BigNumber.from(checkpoint[0][0].toNumber()),
-        BigNumber.from(checkpoint[0][1].toNumber())
+        BigNumber.fromString(checkpoint[0][0].toString()),
+        BigNumber.fromString(checkpoint[0][1].toString())
       )
 
       handler(Bytes.from(checkpointId), [subrange, stateUpdate])
