@@ -5,11 +5,19 @@ import {
   Integer,
   List,
   Tuple,
-  Struct
+  Struct,
+  BigNumber
 } from 'wakkanay/dist/types/Codables'
 
 describe('EthCoder', () => {
   describe('encode', () => {
+    test('encode bignumber', () => {
+      const bigNumber = BigNumber.from(10)
+      expect(EthCoder.encode(bigNumber)).toStrictEqual(
+        EthCoder.encode(Integer.from(10))
+      )
+    })
+
     test('encode struct', () => {
       const struct = Struct.from({
         num: Integer.from(5),
@@ -24,7 +32,7 @@ describe('EthCoder', () => {
 
     test('encode tuple', () => {
       const tuple = Tuple.from([
-        Integer.from(5),
+        BigNumber.from(5),
         Address.from('0x0472ec0185ebb8202f3d4ddb0226998889663cf2'),
         Bytes.fromString('hello')
       ])
@@ -69,6 +77,14 @@ describe('EthCoder', () => {
   })
 
   describe('decode', () => {
+    test('decode bignumber', () => {
+      const b =
+        '0x000000000000000000000000000000000000000000000000000000000000000a'
+      expect(
+        EthCoder.decode(BigNumber.default(), Bytes.fromHexString(b))
+      ).toStrictEqual(BigNumber.from(10))
+    })
+
     test('decode struct', () => {
       const b =
         '0x00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000472ec0185ebb8202f3d4ddb0226998889663cf200000000000000000000000000000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000000000005000000000000000000000000000000000000000000000000000000000000000568656c6c6f000000000000000000000000000000000000000000000000000000'

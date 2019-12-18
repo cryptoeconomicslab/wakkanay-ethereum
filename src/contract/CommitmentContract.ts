@@ -11,20 +11,16 @@ export class CommitmentContract implements ICommitmentContract {
   private eventWatcher: EthEventWatcher
   readonly gasLimit: number
   public static abi = ['function submit_root(uint64 blkNumber, bytes32 _root)']
-  constructor(
-    address: Address,
-    eventDb: KeyValueStore,
-    provider: ethers.providers.Provider
-  ) {
+  constructor(address: Address, eventDb: KeyValueStore, signer: ethers.Signer) {
     this.connection = new ethers.Contract(
-      address.raw,
+      address.data,
       CommitmentContract.abi,
-      provider
+      signer
     )
     this.eventWatcher = new EthEventWatcher({
       endpoint: process.env.MAIN_CHAIN_ENDPOINT as string,
       kvs: eventDb,
-      contractAddress: address.raw,
+      contractAddress: address.data,
       contractInterface: this.connection.interface
     })
     this.gasLimit = 200000
@@ -41,6 +37,10 @@ export class CommitmentContract implements ICommitmentContract {
     this.eventWatcher.subscribe('CheckpointFinalized', (log: EventLog) => {
       const [blockNumber, root] = log.values
       handler(BigNumber.from(blockNumber), Bytes.from(root))
+    })
+    this.eventWatcher.cancel()
+    this.eventWatcher.start(() => {
+      console.log('event polled')
     })
   }
 }
