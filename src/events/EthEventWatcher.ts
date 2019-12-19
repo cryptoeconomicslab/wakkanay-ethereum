@@ -63,7 +63,7 @@ export default class EventWatcher implements IEventWatcher {
       const loaded = await this.eventDb.getLastLoggedBlock(
         Bytes.fromString(this.contractAddress)
       )
-      await this.poll(loaded, block.number, handler)
+      await this.poll(loaded + 1, block.number, handler)
     } catch (e) {
       console.log(e)
       if (errorHandler) {
