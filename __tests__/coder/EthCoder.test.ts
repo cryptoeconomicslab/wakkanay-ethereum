@@ -74,6 +74,31 @@ describe('EthCoder', () => {
         '0x00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000'
       )
     })
+
+    test('encode, decode list of list of integer', () => {
+      const list = List.from(
+        { default: () => List.default(Integer, Integer.default()) },
+        [
+          List.from(Integer, [Integer.from(4), Integer.from(6)]),
+          List.from(Integer, [Integer.from(2), Integer.from(0)]),
+          List.from(Integer, [Integer.from(7), Integer.from(23)]),
+          List.from(Integer, [Integer.from(5), Integer.from(8)])
+        ]
+      )
+
+      const encoded = EthCoder.encode(list)
+      const decoded = EthCoder.decode(
+        List.default(
+          {
+            default: () => List.default(Integer, Integer.default())
+          },
+          List.from(Integer, [])
+        ),
+        encoded
+      )
+
+      expect(decoded.data).toStrictEqual(list.data)
+    })
   })
 
   describe('decode', () => {
@@ -247,6 +272,57 @@ describe('EthCoder', () => {
           },
           { type: 'bytes', name: 'greet' },
           { type: 'uint256', name: 'num' }
+        ]
+      })
+    })
+
+    test('paramType for list of struct', () => {
+      const list = List.from(
+        {
+          default: () =>
+            new Struct({
+              from: Address.default(),
+              amount: Integer.default()
+            })
+        },
+        []
+      )
+
+      expect(getEthParamType(list)).toStrictEqual({
+        type: 'tuple[]',
+        components: [
+          { type: 'uint256', name: 'amount' },
+          { type: 'address', name: 'from' }
+        ]
+      })
+    })
+
+    test('paramType for list of list of struct', () => {
+      const list = List.from(
+        {
+          default: () =>
+            List.default(
+              {
+                default: () =>
+                  new Struct({
+                    from: Address.default(),
+                    amount: Integer.default()
+                  })
+              },
+              new Struct({
+                from: Address.default(),
+                amount: Integer.default()
+              })
+            )
+        },
+        []
+      )
+
+      expect(getEthParamType(list)).toStrictEqual({
+        type: 'tuple[][]',
+        components: [
+          { type: 'uint256', name: 'amount' },
+          { type: 'address', name: 'from' }
         ]
       })
     })

@@ -33,7 +33,7 @@ export function getEthTypeStringRep(v: Codable): string {
 // Ethereum type representation with components field.
 function asParamComponent(v: Codable, i: number, key?: string): ParamType {
   const type = {
-    type: getEthTypeStringRep(v),
+    ...getEthParamType(v),
     name: key || i.toString()
   }
   if (v instanceof Tuple) {
@@ -69,6 +69,12 @@ export function getEthParamType(v: Codable): ParamType {
     }
   } else if (v instanceof List) {
     const d = v.getC().default()
+    if (d instanceof List) {
+      return {
+        ...getEthParamType(d),
+        type: `${getEthTypeStringRep(d)}[]`
+      }
+    }
     if (d instanceof Tuple || d instanceof Struct) {
       return {
         type: 'tuple[]',
