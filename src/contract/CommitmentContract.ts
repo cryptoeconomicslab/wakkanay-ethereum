@@ -10,7 +10,7 @@ export class CommitmentContract implements ICommitmentContract {
   private connection: ethers.Contract
   private eventWatcher: EthEventWatcher
   readonly gasLimit: number
-  public static abi = ['function submit_root(uint64 blkNumber, bytes32 _root)']
+  public static abi = ['function submitRoot(uint64 blkNumber, bytes32 _root)']
   constructor(address: Address, eventDb: KeyValueStore, signer: ethers.Signer) {
     this.connection = new ethers.Contract(
       address.data,
@@ -26,7 +26,7 @@ export class CommitmentContract implements ICommitmentContract {
     this.gasLimit = 200000
   }
   async submit(blockNumber: BigNumber, root: Bytes) {
-    return await this.connection.submit_root(blockNumber, root, {
+    return await this.connection.submitRoot(blockNumber.data.toString(), root, {
       gasLimit: this.gasLimit
     })
   }
