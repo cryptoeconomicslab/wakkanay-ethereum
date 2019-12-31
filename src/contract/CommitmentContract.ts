@@ -36,8 +36,8 @@ export class CommitmentContract implements ICommitmentContract {
   }
 
   async getCurrentBlock(): Promise<BigNumber> {
-    const n = await this.connection.currentBlock()
-    return BigNumber.from(n)
+    const n: ethers.utils.BigNumber = await this.connection.currentBlock()
+    return BigNumber.from(BigInt(n.toString()))
   }
 
   subscribeBlockSubmitted(
