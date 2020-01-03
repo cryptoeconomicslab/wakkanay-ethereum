@@ -74,7 +74,7 @@ export class DepositContract implements IDepositContract {
         BigNumber.fromString(checkpoint[0][1].toString())
       )
 
-      handler(Bytes.from(checkpointId), [subrange, stateUpdate])
+      handler(Bytes.fromHexString(checkpointId), [subrange, stateUpdate])
     })
     this.eventWatcher.cancel()
     this.eventWatcher.start(() => {
@@ -85,7 +85,7 @@ export class DepositContract implements IDepositContract {
   subscribeExitFinalized(handler: (exitId: Bytes) => void) {
     this.eventWatcher.subscribe('ExitFinalized', (log: EventLog) => {
       const [exitId] = log.values
-      handler(Bytes.from(exitId))
+      handler(Bytes.fromHexString(exitId))
     })
     this.eventWatcher.cancel()
     this.eventWatcher.start(() => {
