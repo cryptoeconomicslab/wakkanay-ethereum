@@ -1,6 +1,6 @@
 import * as ethers from 'ethers'
 import { IERC20Contract } from 'wakkanay/dist/contract'
-import { Address, , Integer } from 'wakkanay/dist/types'
+import { Address, Integer } from 'wakkanay/dist/types'
 
 export class PETHContract implements IERC20Contract {
   public static abi = [
