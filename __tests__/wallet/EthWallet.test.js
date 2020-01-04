@@ -57,11 +57,7 @@ describe('EthWallet', () => {
     it('succeed to verify signature', async () => {
       const message = Bytes.fromHexString('0x00123456')
       const signatureDigest = await wallet.signMessage(message)
-      const verify = await wallet.verifyMySignature(
-        message,
-        signatureDigest,
-        Bytes.default()
-      )
+      const verify = await wallet.verifyMySignature(message, signatureDigest)
       expect(verify).toBeTruthy()
     })
     it('fail to verify signature', async () => {
