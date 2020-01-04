@@ -2,6 +2,7 @@ import { wallet, types, verifiers } from 'wakkanay'
 import * as ethers from 'ethers'
 import { arrayify, joinSignature, parseUnits, SigningKey } from 'ethers/utils'
 import BigNumber from 'bignumber.js'
+import { Secp256k1Signer } from 'wakkanay/dist/signers'
 
 import IWallet = wallet.IWallet
 import Address = types.Address
@@ -60,9 +61,10 @@ export class EthWallet implements IWallet {
    * @param message is hex string
    */
   public async signMessage(message: Bytes): Promise<Bytes> {
-    return Bytes.fromHexString(
-      joinSignature(this.signingKey.signDigest(arrayify(message.toHexString())))
+    const signer = new Secp256k1Signer(
+      Bytes.fromHexString(this.signingKey.privateKey)
     )
+    return signer.sign(message)
   }
 
   /**
@@ -73,8 +75,8 @@ export class EthWallet implements IWallet {
     message: Bytes,
     signature: Bytes
   ): Promise<boolean> {
-    const publicKey = Bytes.fromString(this.getAddress().data)
-    return secp256k1Verifier.verify(message, signature, publicKey)
+    const publicKey = Bytes.fromHexString(this.getAddress().data)
+    return await secp256k1Verifier.verify(message, signature, publicKey)
   }
 
   /**
