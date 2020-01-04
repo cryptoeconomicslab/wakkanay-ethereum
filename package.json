@@ -22,7 +22,7 @@
   "dependencies": {
     "bignumber.js": "^9.0.0",
     "ethers": "^4.0.40",
-    "wakkanay": "git+https://github.com/cryptoeconomicslab/wakkanay.git"
+    "wakkanay": "github:cryptoeconomicslab/wakkanay"
   },
   "devDependencies": {
     "@types/jest": "^24.0.20",

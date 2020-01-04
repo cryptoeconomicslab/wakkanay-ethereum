@@ -19,11 +19,17 @@ describe('EthCoder', () => {
     })
 
     test('encode struct', () => {
-      const struct = Struct.from({
-        num: Integer.from(5),
-        addr: Address.from('0x0472ec0185ebb8202f3d4ddb0226998889663cf2'),
-        greet: Bytes.fromString('hello')
-      })
+      const struct = Struct.from([{
+        key: 'addr',
+        value: Address.from('0x0472ec0185ebb8202f3d4ddb0226998889663cf2')
+      },{
+        key: 'greet',
+        value: Bytes.fromString('hello')
+      },{
+        key: 'num',
+        value: Integer.from(5)
+      }
+      ])
 
       expect(EthCoder.encode(struct).toHexString()).toBe(
         '0x00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000472ec0185ebb8202f3d4ddb0226998889663cf200000000000000000000000000000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000000000005000000000000000000000000000000000000000000000000000000000000000568656c6c6f000000000000000000000000000000000000000000000000000000'
@@ -45,21 +51,34 @@ describe('EthCoder', () => {
     test('encode list of struct', () => {
       const factory = {
         default: () =>
-          Struct.from({
-            num: Integer.default(),
-            greet: Bytes.default()
-          })
+          Struct.from(
+            [
+              {
+                key: 'greet',
+                value: Bytes.default()
+              },{
+                key: 'num',
+                value: Integer.default()
+              }
+            ]
+          )
       }
 
       const list = List.from(factory, [
-        Struct.from({
-          num: Integer.from(1),
-          greet: Bytes.fromString('hello')
-        }),
-        Struct.from({
-          num: Integer.from(2),
-          greet: Bytes.fromString('hello')
-        })
+        Struct.from([{
+          key: 'greet',
+          value: Bytes.fromString('hello')
+        },{
+          key: 'num',
+          value: Integer.from(1)
+        }]),
+        Struct.from([{
+          key: 'greet',
+          value: Bytes.fromString('hello')
+        },{
+          key: 'num',
+          value: Integer.from(2)
+        }])
       ])
 
       expect(EthCoder.encode(list).toHexString()).toBe(
@@ -113,18 +132,34 @@ describe('EthCoder', () => {
     test('decode struct', () => {
       const b =
         '0x00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000472ec0185ebb8202f3d4ddb0226998889663cf200000000000000000000000000000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000000000005000000000000000000000000000000000000000000000000000000000000000568656c6c6f000000000000000000000000000000000000000000000000000000'
-      const t = Struct.from({
-        addr: Address.default(),
-        greet: Bytes.default(),
-        num: Integer.default()
-      })
+      const t = Struct.from([
+        {
+          key: 'addr',
+          value: Address.default()
+        },{
+          key: 'greet',
+          value: Bytes.default()
+        },{
+          key: 'num',
+          value: Integer.default()
+        }
+      ])
 
       expect(EthCoder.decode(t, Bytes.fromHexString(b))).toStrictEqual(
-        Struct.from({
-          num: Integer.from(5),
-          addr: Address.from('0x0472ec0185ebb8202f3d4ddb0226998889663cf2'),
-          greet: Bytes.from(new Uint8Array([104, 101, 108, 108, 111]))
-        })
+        Struct.from([
+          {
+            key: 'addr',
+            value: Address.from('0x0472ec0185ebb8202f3d4ddb0226998889663cf2')
+          },
+          {
+            key: 'greet',
+            value: Bytes.from(new Uint8Array([104, 101, 108, 108, 111]))
+          },
+          {
+            key: 'num',
+            value: Integer.from(5)
+          }
+        ])
       )
     })
 
@@ -158,31 +193,55 @@ describe('EthCoder', () => {
     test('decode List of Struct', () => {
       const factory = {
         default: () =>
-          Struct.from({
-            num: Integer.default(),
-            greet: Bytes.default()
-          })
+          Struct.from([
+            {
+              key: 'greet',
+              value: Bytes.default()
+            },{
+              key: 'num',
+              value: Integer.default()
+            }
+          ])
       }
       const b =
         '0x00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000c000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000568656c6c6f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000568656c6c6f000000000000000000000000000000000000000000000000000000'
       const t = List.default(
         factory,
-        Struct.from({
-          num: Integer.default(),
-          greet: Bytes.default()
-        })
+        Struct.from([
+          {
+            key: 'greet',
+            value: Bytes.default()
+          },
+          {
+            key: 'num',
+            value: Integer.default()
+          }
+        ])
       )
 
       expect(EthCoder.decode(t, Bytes.fromHexString(b))).toStrictEqual(
         List.from(factory, [
-          Struct.from({
-            num: Integer.from(1),
-            greet: Bytes.fromString('hello')
-          }),
-          Struct.from({
-            num: Integer.from(2),
-            greet: Bytes.fromString('hello')
-          })
+          Struct.from([
+            {
+              key: 'greet',
+              value: Bytes.fromString('hello')
+            },
+            {
+              key: 'num',
+              value: Integer.from(1)
+            }
+
+          ]),
+          Struct.from([
+            {
+              key: 'greet',
+              value: Bytes.fromString('hello')
+            },
+            {
+              key: 'num',
+              value: Integer.from(2)
+            }
+          ])
         ])
       )
     })
@@ -230,11 +289,18 @@ describe('EthCoder', () => {
     })
 
     test('getEthParamType for Struct', () => {
-      const struct = Struct.from({
-        num: Integer.default(),
-        addr: Address.default(),
-        greet: Bytes.default()
-      })
+      const struct = Struct.from([{
+        key: 'addr',
+        value: Address.default()
+      },{
+        key: 'greet',
+        value: Bytes.default()
+      },
+      {
+        key: 'num',
+        value: Integer.default()
+      }
+    ])
 
       expect(getEthParamType(struct)).toStrictEqual({
         type: 'tuple',
@@ -247,14 +313,30 @@ describe('EthCoder', () => {
     })
 
     test('getEthParamType for nested Struct', () => {
-      const struct = Struct.from({
-        from: Struct.from({
-          addr: Address.default()
-        }),
-        num: Integer.default(),
-        addr: Address.default(),
-        greet: Bytes.default()
-      })
+      const struct = Struct.from(
+        [
+          {
+            key: 'addr',
+            value: Address.default()
+          },
+          {
+            key: 'from',
+            value: Struct.from([
+              {
+                key: 'addr',
+                value: Address.default()
+              }          
+            ])
+          },
+          {
+            key: 'greet',
+            value: Bytes.default()
+          },
+          {
+            key: 'num',
+            value: Integer.default()
+          }
+        ])
 
       expect(getEthParamType(struct)).toStrictEqual({
         type: 'tuple',
@@ -280,10 +362,13 @@ describe('EthCoder', () => {
       const list = List.from(
         {
           default: () =>
-            new Struct({
-              from: Address.default(),
-              amount: Integer.default()
-            })
+            new Struct([{
+              key: 'amount',
+              value: Integer.default()
+            },{
+              key: 'from',
+              value: Address.default()
+            }])
         },
         []
       )
@@ -304,16 +389,22 @@ describe('EthCoder', () => {
             List.default(
               {
                 default: () =>
-                  new Struct({
-                    from: Address.default(),
-                    amount: Integer.default()
-                  })
-              },
-              new Struct({
-                from: Address.default(),
-                amount: Integer.default()
-              })
-            )
+                new Struct([{
+                  key: 'amount',
+                  value: Integer.default()
+                },{
+                  key: 'from',
+                  value: Address.default()
+                }])
+                  },
+                  new Struct([{
+                    key: 'amount',
+                    value: Integer.default()
+                  },{
+                    key: 'from',
+                    value: Address.default()
+                  }])
+                  )
         },
         []
       )

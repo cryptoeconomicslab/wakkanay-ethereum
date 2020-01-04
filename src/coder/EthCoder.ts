@@ -42,9 +42,9 @@ function asParamComponent(v: Codable, i: number, key?: string): ParamType {
   } else if (v.constructor.name === 'Struct') {
     return {
       ...type,
-      components: Object.keys((v as Struct).data)
-        .sort()
-        .map((k, i) => asParamComponent((v as Struct).data[k], i, k))
+      components: (v as Struct).data.map(({ key, value }) =>
+        asParamComponent(value, i, key)
+      )
     }
   }
 
@@ -62,9 +62,9 @@ export function getEthParamType(v: Codable): ParamType {
   } else if (c === 'Struct') {
     return {
       type: 'tuple',
-      components: Object.keys((v as Struct).data)
-        .sort()
-        .map((k, i) => asParamComponent((v as Struct).data[k], i, k))
+      components: (v as Struct).data.map(({ key, value }, i) =>
+        asParamComponent(value, i, key)
+      )
     }
   } else if (c === 'List') {
     const d = (v as List<Codable>).getC().default()
@@ -108,12 +108,11 @@ export function decodeInner(d: Codable, input: any): Codable {
   } else if (c === 'Tuple') {
     d.setData((d as Tuple).data.map((d, i) => decodeInner(d, input[i])))
   } else if (c === 'Struct') {
-    const data: { [key: string]: Codable } = {}
-    Object.keys((d as Struct).data)
-      .sort()
-      .forEach((k, i) => {
-        data[k] = decodeInner((d as Struct).data[k], input[i])
-      })
+    const data: Array<{ key: string; value: Codable }> = (d as Struct).data.map(
+      ({ key, value }, i) => {
+        return { key: key, value: decodeInner(value, input[i]) }
+      }
+    )
     d.setData(data)
   } else {
     throw AbiDecodeError.from(d)
