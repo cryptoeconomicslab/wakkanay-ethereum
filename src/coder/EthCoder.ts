@@ -2,29 +2,27 @@ import { AbiCoder, ParamType, arrayify } from 'ethers/utils'
 import { coder, types } from 'wakkanay'
 import Coder = coder.Coder
 import Codable = types.Codable
-import Address = types.Address
 import Bytes = types.Bytes
-import Integer = types.Integer
 import List = types.List
 import Tuple = types.Tuple
 import Struct = types.Struct
-import BigNumber = types.BigNumber
 import { AbiDecodeError } from './Error'
 
 // Get Ethereum type representation of Codables.
 export function getEthTypeStringRep(v: Codable): string {
-  if (v instanceof Integer || v instanceof BigNumber) {
+  const c = v.constructor.name
+  if (c === 'Integer' || c === 'BigNumber') {
     return 'uint256'
-  } else if (v instanceof Bytes) {
+  } else if (c === 'Bytes') {
     return 'bytes'
-  } else if (v instanceof List) {
-    const d = v.getC().default()
+  } else if (c === 'List') {
+    const d = (v as List<Codable>).getC().default()
     return `${getEthTypeStringRep(d)}[]`
-  } else if (v instanceof Tuple) {
+  } else if (c === 'Tuple') {
     return 'tuple'
-  } else if (v instanceof Address) {
+  } else if (c === 'Address') {
     return 'address'
-  } else if (v instanceof Struct) {
+  } else if (c === 'Struct') {
     return 'tuple'
   }
   throw new Error(`Invalid type for Ethereum Abi coder: ${v.toString()}`)
@@ -36,17 +34,17 @@ function asParamComponent(v: Codable, i: number, key?: string): ParamType {
     ...getEthParamType(v),
     name: key || i.toString()
   }
-  if (v instanceof Tuple) {
+  if (v.constructor.name === 'Tuple') {
     return {
       ...type,
-      components: v.data.map((v, i) => asParamComponent(v, i))
+      components: (v as Tuple).data.map((v, i) => asParamComponent(v, i))
     }
-  } else if (v instanceof Struct) {
+  } else if (v.constructor.name === 'Struct') {
     return {
       ...type,
-      components: Object.keys(v.data)
+      components: Object.keys((v as Struct).data)
         .sort()
-        .map((k, i) => asParamComponent(v.data[k], i, k))
+        .map((k, i) => asParamComponent((v as Struct).data[k], i, k))
     }
   }
 
@@ -55,27 +53,28 @@ function asParamComponent(v: Codable, i: number, key?: string): ParamType {
 
 // Get Ethreum ParamType representation of Codables
 export function getEthParamType(v: Codable): ParamType {
-  if (v instanceof Tuple) {
+  const c = v.constructor.name
+  if (c === 'Tuple') {
     return {
       type: 'tuple',
-      components: v.data.map((v, i) => asParamComponent(v, i))
+      components: (v as Tuple).data.map((v, i) => asParamComponent(v, i))
     }
-  } else if (v instanceof Struct) {
+  } else if (c === 'Struct') {
     return {
       type: 'tuple',
-      components: Object.keys(v.data)
+      components: Object.keys((v as Struct).data)
         .sort()
-        .map((k, i) => asParamComponent(v.data[k], i, k))
+        .map((k, i) => asParamComponent((v as Struct).data[k], i, k))
     }
-  } else if (v instanceof List) {
-    const d = v.getC().default()
-    if (d instanceof List) {
+  } else if (c === 'List') {
+    const d = (v as List<Codable>).getC().default()
+    if (d.constructor.name === 'List') {
       return {
         ...getEthParamType(d),
         type: `${getEthTypeStringRep(d)}[]`
       }
     }
-    if (d instanceof Tuple || d instanceof Struct) {
+    if (d.constructor.name === 'Tuple' || d.constructor.name === 'Struct') {
       return {
         type: 'tuple[]',
         components: getEthParamType(d).components
@@ -89,30 +88,31 @@ export function getEthParamType(v: Codable): ParamType {
 // decode inner representation.
 // transform decoded object into certain Codable type
 export function decodeInner(d: Codable, input: any): Codable {
-  if (d instanceof Integer) {
+  const c = d.constructor.name
+  if (c === 'Integer') {
     d.setData(input.toNumber())
-  } else if (d instanceof BigNumber) {
+  } else if (c === 'BigNumber') {
     d.setData(BigInt(input))
-  } else if (d instanceof Address) {
+  } else if (c === 'Address') {
     d.setData(input)
-  } else if (d instanceof Bytes) {
+  } else if (c === 'Bytes') {
     d.setData(arrayify(input))
-  } else if (d instanceof List) {
+  } else if (c === 'List') {
     d.setData(
       input.map((i: any) => {
-        const di = d.getC().default()
+        const di = (d as List<Codable>).getC().default()
         decodeInner(di, i)
         return di
       })
     )
-  } else if (d instanceof Tuple) {
-    d.setData(d.data.map((d, i) => decodeInner(d, input[i])))
-  } else if (d instanceof Struct) {
+  } else if (c === 'Tuple') {
+    d.setData((d as Tuple).data.map((d, i) => decodeInner(d, input[i])))
+  } else if (c === 'Struct') {
     const data: { [key: string]: Codable } = {}
-    Object.keys(d.data)
+    Object.keys((d as Struct).data)
       .sort()
       .forEach((k, i) => {
-        data[k] = decodeInner(d.data[k], input[i])
+        data[k] = decodeInner((d as Struct).data[k], input[i])
       })
     d.setData(data)
   } else {
