@@ -7,14 +7,14 @@ import EventHandler = events.EventHandler
 import ErrorHandler = events.ErrorHandler
 import CompletedHandler = events.CompletedHandler
 import Bytes = types.Bytes
-type JsonRpcProvider = ethers.providers.JsonRpcProvider
+type Provider = ethers.providers.Provider
 
 export interface EventWatcherOptions {
   interval?: number
 }
 
 export type EthEventWatcherArgType = {
-  endpoint: string
+  provider: Provider
   kvs: KeyValueStore
   contractAddress: string
   contractInterface: ethers.utils.Interface
@@ -22,7 +22,7 @@ export type EthEventWatcherArgType = {
 }
 
 export default class EventWatcher implements IEventWatcher {
-  public httpProvider: JsonRpcProvider
+  public httpProvider: Provider
   public eventDb: EventDb
   public checkingEvents: Map<string, EventHandler>
   public options: EventWatcherOptions
@@ -31,13 +31,13 @@ export default class EventWatcher implements IEventWatcher {
   public contractInterface: ethers.utils.Interface
 
   constructor({
-    endpoint,
+    provider,
     kvs,
     contractAddress,
     contractInterface,
     options
   }: EthEventWatcherArgType) {
-    this.httpProvider = new ethers.providers.JsonRpcProvider(endpoint)
+    this.httpProvider = provider
     this.eventDb = new EventDb(kvs)
     this.checkingEvents = new Map<string, EventHandler>()
     this.options = {
