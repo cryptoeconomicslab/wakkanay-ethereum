@@ -31,7 +31,7 @@ export class DepositContract implements IDepositContract {
     )
     this.gasLimit = 200000
     this.eventWatcher = new EthEventWatcher({
-      endpoint: process.env.MAIN_CHAIN_ENDPOINT as string,
+      provider: this.connection.provider,
       kvs: eventDb,
       contractAddress: address.data,
       contractInterface: this.connection.interface
