@@ -12,6 +12,7 @@ export class CommitmentContract implements ICommitmentContract {
   readonly gasLimit: number
   public static abi = [
     'function submitRoot(uint64 blkNumber, bytes32 _root)',
+    'function blocks(uint64 blkNumber) view returns (bytes32)',
     'function currentBlock() view returns (uint256)'
   ]
   constructor(address: Address, eventDb: KeyValueStore, signer: ethers.Signer) {
@@ -38,6 +39,10 @@ export class CommitmentContract implements ICommitmentContract {
   async getCurrentBlock(): Promise<BigNumber> {
     const n: ethers.utils.BigNumber = await this.connection.currentBlock()
     return BigNumber.from(BigInt(n.toString()))
+  }
+
+  async getRoot(blockNumber: BigNumber): Promise<Bytes> {
+    return await this.connection.blocks(blockNumber.data.toString())
   }
 
   subscribeBlockSubmitted(
