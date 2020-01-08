@@ -6,7 +6,8 @@ import {
   coder,
   contract,
   events,
-  wallet
+  wallet,
+  utils
 } from 'wakkanay'
 
 import * as ethCoder from './coder'
@@ -26,5 +27,6 @@ export {
   events,
   ethEvents,
   wallet,
-  ethWallet
+  ethWallet,
+  utils
 }
