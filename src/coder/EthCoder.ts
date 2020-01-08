@@ -122,7 +122,7 @@ export function decodeInner(d: Codable, input: any): Codable {
 
 const abiCoder = new AbiCoder()
 // Ethereum coder object
-const EthCoder: Coder = {
+export const EthCoder: Coder = {
   /**
    * encode given codable object into EthereumABI hex string representation
    * @param input codable object to encode
