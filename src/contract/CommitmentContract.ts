@@ -13,7 +13,8 @@ export class CommitmentContract implements ICommitmentContract {
   public static abi = [
     'function submitRoot(uint64 blkNumber, bytes32 _root)',
     'function blocks(uint256 blkNumber) view returns (bytes32)',
-    'function currentBlock() view returns (uint256)'
+    'function currentBlock() view returns (uint256)',
+    'event BlockSubmitted(uint64 blockNumber, bytes32 root)'
   ]
   constructor(address: Address, eventDb: KeyValueStore, signer: ethers.Signer) {
     this.connection = new ethers.Contract(
@@ -48,9 +49,13 @@ export class CommitmentContract implements ICommitmentContract {
   subscribeBlockSubmitted(
     handler: (blockNumber: BigNumber, root: Bytes) => void
   ) {
-    this.eventWatcher.subscribe('CheckpointFinalized', (log: EventLog) => {
-      const [blockNumber, root] = log.values
-      handler(BigNumber.from(blockNumber), Bytes.from(root))
+    this.eventWatcher.subscribe('BlockSubmitted', (log: EventLog) => {
+      const blockNumber = log.values[0]
+      const root = log.values[1]
+      handler(
+        BigNumber.fromString(blockNumber.toString()),
+        Bytes.fromHexString(root)
+      )
     })
     this.eventWatcher.cancel()
     this.eventWatcher.start(() => {
