@@ -1,9 +1,8 @@
 jest.unmock('ethers')
-const { EthWallet } = require('../../src/wallet')
+const { EthWallet } = require('../src/EthWallet')
 const ethers = require('ethers')
-const { Address, Bytes } = require('wakkanay/dist/types/Codables')
-const { DepositContract } = require('../../src/contract/DepositContract')
-const { InMemoryKeyValueStore } = require('wakkanay/dist/db')
+const { Address, Bytes } = require('@cryptoeconomicslab/primitives')
+const { InMemoryKeyValueStore } = require('@cryptoeconomicslab/level-kvs')
 
 const mockWallet = jest.fn().mockImplementation(privateKey => {
   return {
