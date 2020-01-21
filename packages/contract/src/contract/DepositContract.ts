@@ -1,11 +1,15 @@
 import * as ethers from 'ethers'
-import { BigNumber, Integer, Address, Bytes, Range } from 'wakkanay/dist/types'
-import { Property } from 'wakkanay/dist/ovm/types'
-import { KeyValueStore } from 'wakkanay/dist/db'
-import { contract } from 'wakkanay'
-import IDepositContract = contract.IDepositContract
+import {
+  BigNumber,
+  Integer,
+  Address,
+  Bytes,
+  Range
+} from '@cryptoeconomicslab/primitives'
+import { Property } from '@cryptoeconomicslab/ovm'
+import { KeyValueStore } from '@cryptoeconomicslab/db'
+import { IDepositContract, EventLog } from '@cryptoeconomicslab/contract'
 import EthEventWatcher from '../events'
-import EventLog from 'wakkanay/dist/events/types/EventLog'
 
 export class DepositContract implements IDepositContract {
   private eventWatcher: EthEventWatcher

@@ -1,4 +1,4 @@
-import { Codable } from 'wakkanay/dist/types/Codables'
+import { Codable } from '@cryptoeconomicslab/primitives'
 
 export class AbiDecodeError extends Error {
   constructor(message: string) {

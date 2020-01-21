@@ -1,12 +1,13 @@
 import * as ethers from 'ethers'
-import { db, events, types } from 'wakkanay'
-import EventDb = events.EventDb
-import KeyValueStore = db.KeyValueStore
-import IEventWatcher = events.IEventWatcher
-import EventHandler = events.EventHandler
-import ErrorHandler = events.ErrorHandler
-import CompletedHandler = events.CompletedHandler
-import Bytes = types.Bytes
+import { Bytes } from '@cryptoeconomicslab/primitives'
+import { KeyValueStore } from '@cryptoeconomicslab/db'
+import {
+  EventDb,
+  EventHandler,
+  ErrorHandler,
+  IEventWatcher,
+  CompletedHandler
+} from '@cryptoeconomicslab/contract'
 type Provider = ethers.providers.Provider
 
 export interface EventWatcherOptions {
@@ -21,12 +22,14 @@ export type EthEventWatcherArgType = {
   options?: EventWatcherOptions
 }
 
+const DEFAULT_INTERVAL = 3000
+
 export default class EventWatcher implements IEventWatcher {
   public httpProvider: Provider
   public eventDb: EventDb
   public checkingEvents: Map<string, EventHandler>
   public options: EventWatcherOptions
-  public timer?: number
+  public timer?: NodeJS.Timer
   public contractAddress: string
   public contractInterface: ethers.utils.Interface
 
@@ -41,7 +44,7 @@ export default class EventWatcher implements IEventWatcher {
     this.eventDb = new EventDb(kvs)
     this.checkingEvents = new Map<string, EventHandler>()
     this.options = {
-      interval: 1000,
+      interval: DEFAULT_INTERVAL,
       ...options
     }
     this.contractAddress = contractAddress
@@ -72,7 +75,7 @@ export default class EventWatcher implements IEventWatcher {
     }
     this.timer = setTimeout(async () => {
       await this.start(handler, errorHandler)
-    }, this.options.interval)
+    }, this.options.interval || DEFAULT_INTERVAL)
   }
 
   public cancel() {

@@ -1,16 +1,11 @@
 import * as ethers from 'ethers'
-import { contract, db, ovm, types } from 'wakkanay'
-import EventLog from 'wakkanay/dist/events/types/EventLog'
+import { Bytes, Address, BigNumber, List } from '@cryptoeconomicslab/primitives'
+import { Property, ChallengeGame } from '@cryptoeconomicslab/ovm'
+import { EventLog, IAdjudicationContract } from '@cryptoeconomicslab/contract'
+import { KeyValueStore } from '@cryptoeconomicslab/db'
 import EthEventWatcher from '../events'
-import KeyValueStore = db.KeyValueStore
-import Property = ovm.Property
-import ChallengeGame = ovm.ChallengeGame
-import Address = types.Address
-import BigNumber = types.BigNumber
-import Bytes = types.Bytes
-import List = types.List
 
-export class AdjudicationContract implements contract.IAdjudicationContract {
+export class AdjudicationContract implements IAdjudicationContract {
   private connection: ethers.Contract
   private eventWatcher: EthEventWatcher
   readonly gasLimit: number

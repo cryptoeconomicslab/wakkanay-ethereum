@@ -1,14 +1,11 @@
-import { wallet, types, verifiers } from 'wakkanay'
 import * as ethers from 'ethers'
-import { arrayify, joinSignature, parseUnits, SigningKey } from 'ethers/utils'
-import BigNumber from 'bignumber.js'
-import { Secp256k1Signer } from 'wakkanay/dist/signers'
-
-import IWallet = wallet.IWallet
-import Address = types.Address
-import Bytes = types.Bytes
-import Balance = types.Balance
-import secp256k1Verifier = verifiers.secp256k1Verifier
+import { parseUnits, SigningKey } from 'ethers/utils'
+import {
+  Secp256k1Signer,
+  secp256k1Verifier
+} from '@cryptoeconomicslab/signature'
+import { Address, Bytes, BigNumber } from '@cryptoeconomicslab/primitives'
+import { Wallet, Balance } from '@cryptoeconomicslab/wallet'
 
 const ERC20abi = [
   'function balanceOf(address tokenOwner) view returns (uint)',
@@ -16,7 +13,7 @@ const ERC20abi = [
   'function decimals() view returns (uint)'
 ]
 
-export class EthWallet implements IWallet {
+export class EthWallet implements Wallet {
   private ethersWallet: ethers.Wallet
   private signingKey: SigningKey
 
@@ -49,7 +46,7 @@ export class EthWallet implements IWallet {
     } else {
       const balanceRes = await this.ethersWallet.getBalance()
       const balanceGwei = parseUnits(balanceRes.toString(), 'gwei')
-      value = new BigNumber(balanceGwei.toString())
+      value = new BigNumber(BigInt(balanceGwei.toString()))
       decimals = 9
       symbol = 'gwei'
     }

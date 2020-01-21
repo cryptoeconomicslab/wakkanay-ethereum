@@ -1,6 +1,6 @@
 import * as ethers from 'ethers'
-import { IERC20Contract } from 'wakkanay/dist/contract'
-import { Address, Integer } from 'wakkanay/dist/types/Codables'
+import { IERC20Contract } from '@cryptoeconomicslab/contract'
+import { Address, Integer } from '@cryptoeconomicslab/primitives'
 
 export class ERC20Contract implements IERC20Contract {
   public static abi = ['function approve(address _spender, uint256 _value)']

@@ -1,9 +1,7 @@
 import * as ethers from 'ethers'
-import { contract } from 'wakkanay'
-import { Address, Bytes, BigNumber } from 'wakkanay/dist/types'
-import ICommitmentContract = contract.ICommitmentContract
-import EventLog from 'wakkanay/dist/events/types/EventLog'
-import { KeyValueStore } from 'wakkanay/dist/db'
+import { Address, Bytes, BigNumber } from '@cryptoeconomicslab/primitives'
+import { EventLog, ICommitmentContract } from '@cryptoeconomicslab/contract'
+import { KeyValueStore } from '@cryptoeconomicslab/db'
 import EthEventWatcher from '../events'
 
 export class CommitmentContract implements ICommitmentContract {
