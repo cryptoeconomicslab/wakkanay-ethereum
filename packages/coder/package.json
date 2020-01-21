@@ -56,5 +56,6 @@
   },
   "dependencies": {
     "ethers": "^4.0.43"
-  }
+  },
+  "gitHead": "21764a1554bc98825f094d8ce514e9799a391e5d"
 }

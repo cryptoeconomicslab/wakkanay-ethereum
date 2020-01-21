@@ -56,5 +56,6 @@
   "devDependencies": {
     "@cryptoeconomicslab/level-kvs": "0.0.3",
     "@cryptoeconomicslab/primitives": "^0.0.5"
-  }
+  },
+  "gitHead": "21764a1554bc98825f094d8ce514e9799a391e5d"
 }
