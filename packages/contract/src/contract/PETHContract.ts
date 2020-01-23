@@ -28,9 +28,7 @@ export class PETHContract implements IERC20Contract {
 
   public async wrap(amount: string) {
     try {
-      await this.connection.wrap(ethers.utils.parseEther(amount), {
-        value: ethers.utils.parseEther(amount)
-      })
+      await this.connection.wrap(ethers.utils.parseEther(amount))
     } catch (e) {
       throw new Error(`Invalid call: ${e}`)
     }
