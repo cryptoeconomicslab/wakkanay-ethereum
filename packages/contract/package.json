@@ -24,28 +24,9 @@
   "scripts": {
     "build": "tsc --build",
     "build:check": "tsc --noEmit",
-    "test": "jest --passWithNoTests",
     "lint": "eslint --ext ts,tsx src",
     "doc": "typedoc --out docs src",
     "clean": "rm -rf lib docs"
-  },
-  "jest": {
-    "transform": {
-      "^.+\\.tsx?$": "ts-jest"
-    },
-    "testMatch": [
-      "**/__tests__/**/?(*.)+(spec|test).(ts|js)",
-      "**/?(*.)+(spec|test).ts"
-    ],
-    "moduleFileExtensions": [
-      "js",
-      "ts"
-    ],
-    "globals": {
-      "ts-jest": {
-        "tsConfig": "tsconfig.json"
-      }
-    }
   },
   "dependencies": {
     "@cryptoeconomicslab/contract": "^0.0.5",

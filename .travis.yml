@@ -11,5 +11,6 @@ before_install:
 script:
   - lerna bootstrap
   - lerna run build
-  - lerna run test --parallel
   - lerna run lint --parallel
+  - npm test
+  - npm run coveralls
