@@ -8,6 +8,7 @@ import {
   Struct
 } from '@cryptoeconomicslab/primitives'
 import { AbiDecodeError } from './Error'
+import JSBI from 'jsbi'
 
 // Get Ethereum type representation of Codables.
 export function getEthTypeStringRep(v: Codable): string {
@@ -93,7 +94,7 @@ export function decodeInner(d: Codable, input: any): Codable {
   if (c === 'Integer') {
     d.setData(input.toNumber())
   } else if (c === 'BigNumber') {
-    d.setData(BigInt(input))
+    d.setData(JSBI.BigInt(input))
   } else if (c === 'Address') {
     d.setData(input)
   } else if (c === 'Bytes') {
