@@ -5,7 +5,8 @@ import { Address, Integer } from '@cryptoeconomicslab/primitives'
 export class PETHContract implements IERC20Contract {
   public static abi = [
     'function approve(address _spender, uint256 _value)',
-    'function wrap(uint256 _amount) payable'
+    'function wrap(uint256 _amount) payable',
+    'function unwrap(uint256 _amount)'
   ]
 
   private connection: ethers.Contract
@@ -20,16 +21,10 @@ export class PETHContract implements IERC20Contract {
 
   public async approve(spender: Address, amount: Integer) {
     try {
+      await this.connection.wrap(ethers.utils.parseEther(String(amount.data)))
       await this.connection.approve(spender.data, amount.data)
     } catch (e) {
-      throw new Error(`Invalid call: ${e}`)
-    }
-  }
-
-  public async wrap(amount: string) {
-    try {
-      await this.connection.wrap(ethers.utils.parseEther(amount))
-    } catch (e) {
+      await this.connection.unwrap(ethers.utils.parseEther(String(amount.data)))
       throw new Error(`Invalid call: ${e}`)
     }
   }
