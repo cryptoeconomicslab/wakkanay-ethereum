@@ -3,6 +3,7 @@ import { Address, Bytes, BigNumber } from '@cryptoeconomicslab/primitives'
 import { EventLog, ICommitmentContract } from '@cryptoeconomicslab/contract'
 import { KeyValueStore } from '@cryptoeconomicslab/db'
 import EthEventWatcher from '../events'
+import JSBI from 'jsbi'
 
 export class CommitmentContract implements ICommitmentContract {
   private connection: ethers.Contract
@@ -37,7 +38,7 @@ export class CommitmentContract implements ICommitmentContract {
 
   async getCurrentBlock(): Promise<BigNumber> {
     const n: ethers.utils.BigNumber = await this.connection.currentBlock()
-    return BigNumber.from(BigInt(n.toString()))
+    return BigNumber.from(JSBI.BigInt(n.toString()))
   }
 
   async getRoot(blockNumber: BigNumber): Promise<Bytes> {

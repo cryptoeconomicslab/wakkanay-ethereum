@@ -6,6 +6,7 @@ import {
 } from '@cryptoeconomicslab/signature'
 import { Address, Bytes, BigNumber } from '@cryptoeconomicslab/primitives'
 import { Wallet, Balance } from '@cryptoeconomicslab/wallet'
+import JSBI from 'jsbi'
 
 const ERC20abi = [
   'function balanceOf(address tokenOwner) view returns (uint)',
@@ -46,7 +47,7 @@ export class EthWallet implements Wallet {
     } else {
       const balanceRes = await this.ethersWallet.getBalance()
       const balanceGwei = parseUnits(balanceRes.toString(), 'gwei')
-      value = new BigNumber(BigInt(balanceGwei.toString()))
+      value = new BigNumber(JSBI.BigInt(balanceGwei.toString()))
       decimals = 9
       symbol = 'gwei'
     }
