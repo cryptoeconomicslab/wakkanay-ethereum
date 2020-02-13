@@ -21,7 +21,9 @@ export class PETHContract implements IERC20Contract {
 
   public async approve(spender: Address, amount: Integer) {
     try {
-      await this.connection.wrap(ethers.utils.parseEther(String(amount.data)))
+      await this.connection.wrap(ethers.utils.parseEther(String(amount.data)), {
+        value: ethers.utils.parseEther(String(amount.data))
+      })
       await this.connection.approve(spender.data, amount.data)
     } catch (e) {
       await this.connection.unwrap(ethers.utils.parseEther(String(amount.data)))
