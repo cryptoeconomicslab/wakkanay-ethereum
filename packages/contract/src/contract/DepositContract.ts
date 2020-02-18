@@ -51,16 +51,21 @@ export class DepositContract implements IDepositContract {
     )
   }
   async finalizeCheckpoint(checkpoint: Property): Promise<void> {
-    // TODO: fix
-    return await this.connection.deposit(checkpoint, {
-      gasLimit: this.gasLimit
-    })
+    return await this.connection.finalizeCheckpoint(
+      [checkpoint.deciderAddress.data, checkpoint.inputs],
+      {
+        gasLimit: this.gasLimit
+      }
+    )
   }
   async finalizeExit(exit: Property, depositedRangeId: Integer): Promise<void> {
-    // TODO: fix
-    return await this.connection.deposit(exit, depositedRangeId, {
-      gasLimit: this.gasLimit
-    })
+    return await this.connection.finalizeExit(
+      [exit.deciderAddress.data, exit.inputs],
+      depositedRangeId.data,
+      {
+        gasLimit: this.gasLimit
+      }
+    )
   }
 
   subscribeCheckpointFinalized(
