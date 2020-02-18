@@ -36,7 +36,7 @@ export class AdjudicationContract implements IAdjudicationContract {
       contractAddress: address.data,
       contractInterface: this.connection.interface
     })
-    this.gasLimit = 200000
+    this.gasLimit = 400000
   }
 
   async getGame(gameId: Bytes): Promise<ChallengeGame> {
@@ -57,7 +57,7 @@ export class AdjudicationContract implements IAdjudicationContract {
 
   async claimProperty(property: Property): Promise<void> {
     return await this.connection.claimProperty(
-      { predicateAddress: property.deciderAddress, inputs: property.inputs },
+      [property.deciderAddress.data, property.inputs],
       {
         gasLimit: this.gasLimit
       }
