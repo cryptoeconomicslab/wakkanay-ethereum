@@ -9,6 +9,7 @@ export class OwnershipPayoutContract implements IOwnershipPayoutContract {
   ]
 
   private connection: ethers.Contract
+  private gasLimit = 1000000
 
   constructor(readonly address: Address, signer: ethers.Signer) {
     this.connection = new ethers.Contract(
@@ -27,8 +28,11 @@ export class OwnershipPayoutContract implements IOwnershipPayoutContract {
     await this.connection.finalizeExit(
       depositContractAddress.data,
       [exitProperty.deciderAddress.data, exitProperty.inputs],
-      depositedRangeId.data,
-      owner.data
+      depositedRangeId.data.toString(),
+      owner.data,
+      {
+        gasLimit: this.gasLimit
+      }
     )
   }
 }
