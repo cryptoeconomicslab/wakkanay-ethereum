@@ -27,7 +27,7 @@ export class CommitmentContract implements ICommitmentContract {
       contractAddress: address.data,
       contractInterface: this.connection.interface
     })
-    this.gasLimit = 200000
+    this.gasLimit = 400000
   }
 
   async submit(blockNumber: BigNumber, root: Bytes) {
