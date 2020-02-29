@@ -19,6 +19,8 @@ export class DepositContract implements IDepositContract {
   public static abi = [
     'event CheckpointFinalized(bytes32 checkpointId, tuple(tuple(uint256, uint256), tuple(address, bytes[])) checkpoint)',
     'event ExitFinalized(bytes32 exitId)',
+    'event DepositedRangeExtended(tuple(uint256, uint256) newRange)',
+    'event DepositedRangeRemoved(tuple(uint256, uint256) removedRange)',
     'function deposit(uint256 _amount, tuple(address, bytes[]) _initialState)',
     'function finalizeCheckpoint(tuple(address, bytes[]) _checkpoint)',
     'function finalizeExit(tuple(address, bytes[]) _exit, uint256 _depositedRangeId)'
@@ -87,7 +89,7 @@ export class DepositContract implements IDepositContract {
     })
     this.eventWatcher.cancel()
     this.eventWatcher.start(() => {
-      console.log('event polled')
+      console.log('CheckpointFinalized')
     })
   }
 
@@ -98,7 +100,33 @@ export class DepositContract implements IDepositContract {
     })
     this.eventWatcher.cancel()
     this.eventWatcher.start(() => {
-      console.log('event polled')
+      console.log('ExitFinalized')
+    })
+  }
+
+  subscribeDepositedRangeExtended(handler: (range: Range) => void) {
+    this.eventWatcher.subscribe('DepositedRangeExtended', (log: EventLog) => {
+      const [rawRange] = log.values
+      const start = BigNumber.fromHexString(rawRange[0].toHexString())
+      const end = BigNumber.fromHexString(rawRange[1].toHexString())
+      handler(new Range(start, end))
+    })
+    this.eventWatcher.cancel()
+    this.eventWatcher.start(() => {
+      console.log('Event: DepositedRangeExtended')
+    })
+  }
+
+  subscribeDepositedRangeRemoved(handler: (range: Range) => void) {
+    this.eventWatcher.subscribe('DepositedRangeRemoved', (log: EventLog) => {
+      const [rawRange] = log.values
+      const start = BigNumber.fromHexString(rawRange[0].toHexString())
+      const end = BigNumber.fromHexString(rawRange[1].toHexString())
+      handler(new Range(start, end))
+    })
+    this.eventWatcher.cancel()
+    this.eventWatcher.start(() => {
+      console.log('Event: DepositedRangeRemoved')
     })
   }
 }
