@@ -89,7 +89,7 @@ export class DepositContract implements IDepositContract {
     })
     this.eventWatcher.cancel()
     this.eventWatcher.start(() => {
-      console.log('CheckpointFinalized')
+      // do nothing
     })
   }
 
@@ -100,33 +100,33 @@ export class DepositContract implements IDepositContract {
     })
     this.eventWatcher.cancel()
     this.eventWatcher.start(() => {
-      console.log('ExitFinalized')
+      // do nothing
     })
   }
 
   subscribeDepositedRangeExtended(handler: (range: Range) => void) {
     this.eventWatcher.subscribe('DepositedRangeExtended', (log: EventLog) => {
-      const [rawRange] = log.values
+      const rawRange = log.values.newRange
       const start = BigNumber.fromHexString(rawRange[0].toHexString())
       const end = BigNumber.fromHexString(rawRange[1].toHexString())
       handler(new Range(start, end))
     })
     this.eventWatcher.cancel()
     this.eventWatcher.start(() => {
-      console.log('Event: DepositedRangeExtended')
+      // do nothing
     })
   }
 
   subscribeDepositedRangeRemoved(handler: (range: Range) => void) {
     this.eventWatcher.subscribe('DepositedRangeRemoved', (log: EventLog) => {
-      const [rawRange] = log.values
+      const rawRange = log.values.removedRange
       const start = BigNumber.fromHexString(rawRange[0].toHexString())
       const end = BigNumber.fromHexString(rawRange[1].toHexString())
       handler(new Range(start, end))
     })
     this.eventWatcher.cancel()
     this.eventWatcher.start(() => {
-      console.log('Event: DepositedRangeRemoved')
+      // do nothing
     })
   }
 }
