@@ -50,7 +50,8 @@ export default async function initialize(options: EthLightClientOptions) {
     tokenContractFactory,
     commitmentContract,
     ownershipPayoutContract,
-    deciderConfig: options.deciderConfig
+    deciderConfig: options.deciderConfig,
+    aggregatorEndpoint: options.aggregatorEndpoint
   })
   client.registerCustomToken(
     new PETHContract(
