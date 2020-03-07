@@ -39,6 +39,10 @@
       "ts-jest": {
         "tsConfig": "tsconfig.json"
       }
-    }
+    },
+    "collectCoverageFrom": [
+      "packages/**/src/**/*.ts?(x)",
+      "!**/@types/**"
+    ]
   }
 }
