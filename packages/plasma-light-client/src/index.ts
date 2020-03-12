@@ -8,14 +8,16 @@ import {
   CommitmentContract,
   AdjudicationContract,
   OwnershipPayoutContract,
-  PETHContract
+  PETHContract,
+  EthContractConfig
 } from '@cryptoeconomicslab/eth-contract'
 import LightClient from '@cryptoeconomicslab/plasma-light-client'
+import { DeciderConfig } from '@cryptoeconomicslab/ovm'
 
 interface EthLightClientOptions {
   wallet: ethers.Wallet
   kvs: KeyValueStore
-  deciderConfig: any
+  config: DeciderConfig & EthContractConfig
   aggregatorEndpoint?: string
 }
 
@@ -23,7 +25,7 @@ export default async function initialize(options: EthLightClientOptions) {
   const eventDb = await options.kvs.bucket(Bytes.fromString('event'))
   const ethWallet = new EthWallet(options.wallet)
   const adjudicationContract = new AdjudicationContract(
-    Address.from(options.deciderConfig.adjudicationContract),
+    Address.from(options.config.adjudicationContract),
     eventDb,
     options.wallet
   )
@@ -34,12 +36,12 @@ export default async function initialize(options: EthLightClientOptions) {
     return new ERC20Contract(address, options.wallet)
   }
   const commitmentContract = new CommitmentContract(
-    Address.from(options.deciderConfig.commitmentContract),
+    Address.from(options.config.commitmentContract),
     eventDb,
     options.wallet
   )
   const ownershipPayoutContract = new OwnershipPayoutContract(
-    Address.from(options.deciderConfig.payoutContracts['OwnershipPayout']),
+    Address.from(options.config.payoutContracts['OwnershipPayout']),
     options.wallet
   )
   const client = await LightClient.initilize({
@@ -50,16 +52,13 @@ export default async function initialize(options: EthLightClientOptions) {
     tokenContractFactory,
     commitmentContract,
     ownershipPayoutContract,
-    deciderConfig: options.deciderConfig,
+    deciderConfig: options.config,
     aggregatorEndpoint: options.aggregatorEndpoint
   })
   client.registerCustomToken(
-    new PETHContract(
-      Address.from(options.deciderConfig.PlasmaETH),
-      options.wallet
-    ),
+    new PETHContract(Address.from(options.config.PlasmaETH), options.wallet),
     depositContractFactory(
-      Address.from(options.deciderConfig.payoutContracts['DepositContract'])
+      Address.from(options.config.payoutContracts['DepositContract'])
     )
   )
   return client
