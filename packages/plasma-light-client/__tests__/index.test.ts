@@ -19,7 +19,7 @@ describe('index', () => {
       const kvs = new LevelKeyValueStore(Bytes.fromString('root'))
       let wallet = ethers.Wallet.createRandom()
       wallet = wallet.connect(ethers.getDefaultProvider())
-      const client = await initialize({ wallet, kvs, deciderConfig })
+      const client = await initialize({ wallet, kvs, config: deciderConfig })
       expect(client['adjudicationContract']).toBeInstanceOf(
         AdjudicationContract
       )
