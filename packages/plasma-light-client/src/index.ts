@@ -13,6 +13,12 @@ import {
 } from '@cryptoeconomicslab/eth-contract'
 import LightClient from '@cryptoeconomicslab/plasma-light-client'
 import { DeciderConfig } from '@cryptoeconomicslab/ovm'
+import { EthCoder } from '@cryptoeconomicslab/eth-coder'
+import { setupContext } from '@cryptoeconomicslab/context'
+
+setupContext({
+  coder: EthCoder
+})
 
 interface EthLightClientOptions {
   wallet: ethers.Wallet
