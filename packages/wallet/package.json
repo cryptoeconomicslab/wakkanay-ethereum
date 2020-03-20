@@ -29,15 +29,15 @@
     "clean": "rm -rf lib docs"
   },
   "dependencies": {
-    "@cryptoeconomicslab/signature": "0.0.35",
-    "@cryptoeconomicslab/wallet": "0.0.35",
+    "@cryptoeconomicslab/signature": "0.0.37",
+    "@cryptoeconomicslab/wallet": "0.0.37",
     "bignumber.js": "^9.0.0",
-    "ethers": "^4.0.45",
+    "ethers": "^4.0.46",
     "jsbi": "^3.1.2"
   },
   "devDependencies": {
     "@cryptoeconomicslab/level-kvs": "0.0.6",
-    "@cryptoeconomicslab/primitives": "0.0.35"
+    "@cryptoeconomicslab/primitives": "0.0.37"
   },
   "peerDependencies": {
     "@cryptoeconomicslab/primitives": "^0.0.5"
