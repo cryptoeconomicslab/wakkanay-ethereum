@@ -1,6 +1,6 @@
 {
   "name": "@cryptoeconomicslab/eth-plasma-light-client",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Ethereum Plasma light client",
   "author": {
     "name": "Cryptoeconomics Lab",
@@ -29,9 +29,9 @@
     "clean": "rm -rf lib docs"
   },
   "dependencies": {
-    "@cryptoeconomicslab/eth-coder": "0.0.9",
-    "@cryptoeconomicslab/eth-contract": "^0.0.9",
-    "@cryptoeconomicslab/eth-wallet": "^0.0.9",
+    "@cryptoeconomicslab/eth-coder": "^0.0.10",
+    "@cryptoeconomicslab/eth-contract": "^0.0.10",
+    "@cryptoeconomicslab/eth-wallet": "^0.0.10",
     "@cryptoeconomicslab/ovm": "0.0.37",
     "@cryptoeconomicslab/plasma-light-client": "0.0.37",
     "ethers": "^4.0.46"
