@@ -29,14 +29,14 @@
     "clean": "rm -rf lib docs"
   },
   "devDependencies": {
-    "@cryptoeconomicslab/coder": "0.0.35",
-    "@cryptoeconomicslab/primitives": "0.0.35"
+    "@cryptoeconomicslab/coder": "0.0.37",
+    "@cryptoeconomicslab/primitives": "0.0.37"
   },
   "peerDependencies": {
     "@cryptoeconomicslab/primitives": "^0.0.5"
   },
   "dependencies": {
-    "ethers": "^4.0.45",
+    "ethers": "^4.0.46",
     "jsbi": "^3.1.2"
   },
   "gitHead": "21764a1554bc98825f094d8ce514e9799a391e5d"
