@@ -41,8 +41,13 @@ export class CommitmentContract implements ICommitmentContract {
     return BigNumber.from(JSBI.BigInt(n.toString()))
   }
 
+  /**
+   * Get Merkle Root hash as Bytes
+   * @param blockNumber block number to get Merkle Root
+   */
   async getRoot(blockNumber: BigNumber): Promise<Bytes> {
-    return await this.connection.blocks(blockNumber.data.toString())
+    const root = await this.connection.blocks(blockNumber.data.toString())
+    return Bytes.fromHexString(root)
   }
 
   subscribeBlockSubmitted(
