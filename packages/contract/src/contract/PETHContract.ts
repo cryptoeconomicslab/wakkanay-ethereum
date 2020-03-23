@@ -1,12 +1,13 @@
 import * as ethers from 'ethers'
-import { IERC20Contract } from '@cryptoeconomicslab/contract'
+import { IERC20DetailedContract } from '@cryptoeconomicslab/contract'
 import { Address, Integer } from '@cryptoeconomicslab/primitives'
 
-export class PETHContract implements IERC20Contract {
+export class PETHContract implements IERC20DetailedContract {
   public static abi = [
     'function approve(address _spender, uint256 _value)',
     'function wrap(uint256 _amount) payable',
-    'function unwrap(uint256 _amount)'
+    'function unwrap(uint256 _amount)',
+    'function decimals() view returns (uint8)'
   ]
 
   private connection: ethers.Contract
@@ -28,6 +29,20 @@ export class PETHContract implements IERC20Contract {
     } catch (e) {
       await this.connection.unwrap(ethers.utils.parseEther(String(amount.data)))
       throw new Error(`Invalid call: ${e}`)
+    }
+  }
+
+  /**
+   * decimals method returns decimal value of PlasmaETH token.
+   * @returns return Integer object of decimal value. It returns 18.
+   */
+  public async decimals(): Promise<Integer> {
+    try {
+      return Integer.from(await this.connection.decimals())
+    } catch (e) {
+      throw new Error(
+        `Invalid call: ${e}. This PETHContract doesn't have decimals.`
+      )
     }
   }
 }
